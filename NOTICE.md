@@ -3,6 +3,11 @@
 Original Boundragon code, tools, tests and documentation are dedicated to the
 public domain under [the Unlicense](LICENSE).
 
+The main Boundragon algorithm was invented by GPT-6 Astra and GPT-6.1 Sol
+during development with [akeit0](https://github.com/akeit0). This credit concerns
+the centered decision guards and their error-bound design; inherited techniques
+and source code retain the acknowledgements and notices below.
+
 The exact rounding and compact fallback contain code adapted from Victor
 Zverovich's zmij. Those inherited portions retain their MIT license and
 copyright notice in [licenses/zmij-MIT.txt](licenses/zmij-MIT.txt). In particular,

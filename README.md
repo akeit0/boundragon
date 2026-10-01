@@ -2,6 +2,8 @@
 
 Shortest decimal conversion with bounded-error guards.
 
+**[Interactive explorer and documentation →](https://akeit0.github.io/boundragon/)**
+
 Boundragon is an experimental, header-only C++20 library for IEEE 754 binary32
 and binary64. It returns the closest shortest decimal as an integer coefficient,
 decimal exponent, and sign, with ties to even. The default paths are **binary32
@@ -48,6 +50,10 @@ Centered guards accept a decimal when that error cannot change the choice;
 uncertain cases use a complete integer converter. Its contributions are
 centered acceptance guards, explicit cache-error contracts, and precision
 allocation tailored to each format.
+
+The main Boundragon algorithm was invented by **GPT-6 Astra and GPT-6.1 Sol**
+during development with [akeit0](https://github.com/akeit0). This credits the
+centered decision guards and their error-bound design described here.
 
 The coarse/fine decimal grids are prior art. Decimal scaling and exact finishing
 are credited to xjb and zmij. See the [algorithm](docs/algorithm.md),
@@ -108,26 +114,9 @@ exhaustive binary32 checks.
 
 The English/Japanese explorer follows each format's native conversion path,
 with equations, decimal grids, evaluated decisions, and compact measured ratios.
-Its [HTML source](docs/index.html) needs the generated assets below; preview
-instructions are in [the explorer guide](docs/explorer.md).
-
-With Node.js, npm, and Python 3:
-
-```sh
-npm ci
-npm run build:site
-npm run check:docs
-npm run check:publication
-python3 -m http.server 8765 --directory dist/site --bind 127.0.0.1
-```
-
-Open `http://127.0.0.1:8765/`. For native browser-translation checks, configure
-CMake after building the docs, with `-DBOUNDRAGON_BUILD_EXPLORER_TESTS=ON`.
-
-GitHub Actions builds and tests the site on pull requests and publishes from
-`main`. Select **GitHub Actions** as the repository's Pages source. Generated
-browser assets, dependencies, and `dist/` are ignored; only maintained sources
-and compact measurement records are committed.
+**[Open the explorer](https://akeit0.github.io/boundragon/)** to try a value or
+follow a preset. [The explorer guide](docs/explorer.md) covers local previews
+and site maintenance for contributors.
 
 ## License
 

@@ -70,7 +70,8 @@ Intel Core i7-13700F, WSL2 x86-64, GCC 11.4.0, `-O3 -march=native -flto`;
 recorded 2026-10-01, with two seeds and eleven trials per seed. Times below are
 median thread CPU **ns/value**; lower is better. Linked bytes are
 control-subtracted `.text + .rodata` after LTO and section GC, including
-alignment and excluding the harness. These are measured workload comparisons,
+alignment and excluding the harness. **Bold marks the lowest value in each
+table column**, including ties. These are measured workload comparisons,
 not a universal speed claim.
 
 ### Pure canonical conversion
@@ -85,8 +86,8 @@ footprint is larger than Dragonbox full's, but smaller than either zmij adapter'
 
 | Implementation | Random finite bits | 1–6 decimal digits | Mixed 1–9 digits | Simple values | Linked bytes |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| **Boundragon Fast** | **5.814** | **3.970** | **4.511** | **3.812** | **4,749** |
-| Dragonbox full | 8.648 | 5.265 | 6.589 | 5.526 | 1,510 |
+| Boundragon Fast | **5.814** | **3.970** | **4.511** | **3.812** | 4,749 |
+| Dragonbox full | 8.648 | 5.265 | 6.589 | 5.526 | **1,510** |
 | zmij serial | 8.415 | 16.210 | 15.630 | 12.801 | 23,226 |
 | zmij grouped | 7.368 | 6.019 | 6.857 | 6.378 | 23,315 |
 
@@ -98,9 +99,9 @@ mixed decimals and simple values; Dragonbox compact uses much less space.
 
 | Implementation | Random finite bits | 1–6 decimal digits | Mixed 1–17 digits | Simple values | Linked bytes |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| **Boundragon Balanced** | **6.813** | **7.182** | **7.049** | **8.058** | **7,793** |
-| Dragonbox full | 8.408 | 6.400 | 6.740 | 6.487 | 11,135 |
-| Dragonbox compact | 11.451 | 9.606 | 9.943 | 9.241 | 1,990 |
+| Boundragon Balanced | **6.813** | 7.182 | 7.049 | 8.058 | 7,793 |
+| Dragonbox full | 8.408 | **6.400** | **6.740** | **6.487** | 11,135 |
+| Dragonbox compact | 11.451 | 9.606 | 9.943 | 9.241 | **1,990** |
 | zmij serial | 9.307 | 27.574 | 23.242 | 18.972 | 23,267 |
 | zmij grouped | 10.686 | 17.383 | 22.724 | 10.637 | 23,356 |
 
@@ -115,10 +116,10 @@ native writers remain unmodified. All entries are integrated writers.
 
 | Writer | Random finite bits | Simple values | Exact integers | Subnormals | Linked bytes |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| **Boundragon Balanced + xjb tail** | **11.06** | **10.52** | **8.06** | **14.05** | **14,664** |
-| Native xjb | 9.14 | 10.93 | 9.19 | 9.09 | 19,704 |
-| Native compact xjb | 22.61 | 13.91 | 15.96 | 15.72 | 2,164 |
-| Boundragon Balanced + zmij tail | 10.92 | 10.52 | 7.65 | 13.93 | 18,104 |
+| Boundragon Balanced + xjb tail | 11.06 | **10.52** | 8.06 | 14.05 | 14,664 |
+| Native xjb | **9.14** | 10.93 | 9.19 | **9.09** | 19,704 |
+| Native compact xjb | 22.61 | 13.91 | 15.96 | 15.72 | **2,164** |
+| Boundragon Balanced + zmij tail | 10.92 | **10.52** | **7.65** | 13.93 | 18,104 |
 | Native zmij | 10.25 | 11.15 | 9.90 | 10.28 | 24,168 |
 
 **Balanced + xjb tail is the speed/size compromise:** 25.6% fewer linked bytes

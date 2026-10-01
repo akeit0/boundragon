@@ -59,8 +59,11 @@ The first build may fetch dependencies; the project README describes how to
 download their precompiled cache. The build checks the centered binary64 guard
 proofs, reference normalization, both accepted branches' canonical shortestness
 and unique closest selection under the documented contracts, and the ordered
-floor-sum certificate principle.
-It also audits transitive axioms. The checker rechecks the compiled proof
+floor-sum certificate principle. It also checks product/remainder identities,
+cache-scaling bounds, nearest/even rounding-policy implications, and concrete
+witnesses for the accepted model. The axiom audit covers public and private
+declarations; CI tests rejection of unfinished proofs and custom dependencies.
+The checker rechecks the compiled proof
 environment. This is separate from CTest; complete-converter correctness,
 including small-subnormal exceptions, fallback, concrete cache contracts, and
 C++ source correspondence, remains unfinished.

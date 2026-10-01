@@ -17,13 +17,19 @@ namespace Boundragon
 all equally short valid decimal values. `digitIndex + 1` is the digit count.
 -/
 structure DecimalRep.Optimal (x r : ℚ) (d : DecimalRep) : Prop where
+  /-- The recorded digit count is the actual coefficient digit count. -/
   wellFormed : d.WellFormed
+  /-- Trailing zeroes have been removed. -/
   canonical : d.Canonical
+  /-- Output is inside either parity's interval, since its endpoints are avoided. -/
   valid : |x - d.value| < r
+  /-- No positive decimal at any exponent has fewer digits while remaining valid. -/
   shortest : ∀ b : DecimalRep, b.WellFormed → |x - b.value| ≤ r →
     d.digitIndex ≤ b.digitIndex
+  /-- Among equally short valid decimals, the output minimizes numerical distance. -/
   closest : ∀ b : DecimalRep, b.WellFormed → |x - b.value| ≤ r →
     b.digitIndex = d.digitIndex → |x - d.value| ≤ |x - b.value|
+  /-- Accepted filters avoid ties. Fallback uses `NearestEven` instead. -/
   unique_closest : ∀ b : DecimalRep, b.WellFormed → |x - b.value| ≤ r →
     b.digitIndex = d.digitIndex → |x - d.value| = |x - b.value| → d.value = b.value
 
@@ -124,6 +130,7 @@ theorem fine_shortest_closest (x r : ℚ) (n : ℤ) (D : ℕ)
     (hnearest : ∀ i : ℤ, i ≠ n → |x - n| < |x - i|) :
     DecimalRep.Optimal x r ⟨n, 0, D⟩ := by
   have hinterval := fine_interval_decade x r n D hlower hn hd hcoarse
+  -- Same decimal order links a shorter coefficient to a larger exponent.
   have horder := valid_decimal_order x r D hinterval
   have hcanonical : ¬(10 : ℤ) ∣ n := by
     rintro ⟨j, hj⟩
@@ -145,6 +152,7 @@ theorem fine_shortest_closest (x r : ℚ) (n : ℤ) (D : ℕ)
     by_contra hbad
     have heq := horder b hb hvalid
     have he : 1 ≤ b.exponent := by omega
+    -- A larger exponent places this allegedly shorter decimal on the excluded grid.
     obtain ⟨j, hj⟩ := decimal_on_coarse b he
     rw [hj] at hvalid
     exact (not_le_of_gt (hcoarse j)) hvalid

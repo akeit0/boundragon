@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - proof/lean/**
+      - tools/check_lean_audit.py
       - include/boundragon/detail/centered_filter.h
       - include/boundragon/detail/compact_cache.h
       - .github/workflows/lean-proof.yml
   pull_request:
     paths:
       - proof/lean/**
+      - tools/check_lean_audit.py
       - include/boundragon/detail/centered_filter.h
       - include/boundragon/detail/compact_cache.h
       - .github/workflows/lean-proof.yml
@@ -36,3 +38,5 @@ jobs:
           use-mathlib-cache: 'true'
           leanchecker: 'true'
           leanchecker-args: Boundragon
+      - name: Check audit rejection cases
+        run: python3 tools/check_lean_audit.py

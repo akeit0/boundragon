@@ -25,6 +25,10 @@ cache and interval contracts. For both accepted branches with significand
 `m >= 11`, it also proves canonical shortestness and unique closest selection
 after reference normalization at any decimal scale, including power-of-ten
 boundaries. The ordered floor-sum certificate principle is proved separately.
+It also proves product/remainder identities, general cache-scaling bounds,
+and the nearest/even rounding-policy implication under explicit numerical
+certificate hypotheses. The [trust review](../proof/lean/TRUST.md) identifies
+those hypotheses and the proof-integrity checks.
 Small-subnormal exceptions, the complete fallback, concrete cache
 contracts/certificates, and C++ source correspondence remain outside this
 partial formalization.

@@ -163,6 +163,8 @@ closest selection proved after reference normalization for significands
 The ordered floor-sum certificate principle is also proved. This remains a
 partial formalization: small-subnormal exceptions, fallback correctness,
 concrete cache contracts, and C++ source correspondence are unfinished.
+The [trust review](proof/lean/TRUST.md) distinguishes checked proofs from
+remaining numerical certificate assumptions.
 
 ## Interactive documentation
 

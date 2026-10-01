@@ -2,6 +2,16 @@ module
 
 public import Boundragon.Binary64
 
+/-!
+Read this model in fixed-point coarse coordinates: the exact center is `Y`,
+the radius is `R`, the cached lower estimate is `u`, and `h = floor R`.
+`c` is half the cache-error budget, so the centered estimate `u+c` has
+error in [-c,c). The binary significand `m` gives `Y = 2*m*R`.
+
+The guard chooses a grid before normalization. `none` transfers control to
+fallback; it is not an assertion that no valid decimal exists.
+-/
+
 public section
 
 namespace Boundragon
@@ -16,12 +26,15 @@ inductive CenteredChoice where
 construction are outside this model; the algebraic guard identities are in
 `Binary64.lean`.
 -/
-def centeredDecision2048 (u h c : ℤ) : Option CenteredChoice :=
+@[expose] def centeredDecision2048 (u h c : ℤ) : Option CenteredChoice :=
   let j := coarseIndex2048 u c
   let w := centeredResidual2048 u c
   let D := |w|
+  -- The cache error could move the coarse point across a parsing endpoint.
   if -c + 1 ≤ D - h ∧ D - h ≤ c then none
+  -- Outside that shell, a distance below the integer radius proves validity.
   else if D < h then some (.coarse j)
+  -- The shifted remainder must stay away from a fine rounding boundary.
   else if (5 * w + 512 + 5 * c) % 1024 ≤ 10 * c then none
   else some (.fine (fineCoefficient2048 j w))
 
@@ -29,11 +42,17 @@ def centeredDecision2048 (u h c : ℤ) : Option CenteredChoice :=
 These are theorem hypotheses, not additional logical axioms.
 -/
 structure CenteredContract2048 (u h c m : ℤ) (Y R : ℚ) : Prop where
+  /-- The cache error budget is a positive number of fixed-point units. -/
   error_pos : 0 < c
+  /-- What cache construction must establish, independently of guard safety. -/
   cache_error : 0 ≤ Y - u ∧ Y - u < 2 * c
+  /-- The symmetric binary parsing interval in these coordinates. -/
   geometry : Y = 2 * (m : ℚ) * R
+  /-- The interval is at least one fine step wide. -/
   radius_min : (2048 : ℚ) / 20 ≤ R
+  /-- The interval is narrower than one coarse step. -/
   radius_max : R < 1024
+  /-- The implemented integer radius must be exactly the radius floor. -/
   radius_floor : (h : ℚ) ≤ R ∧ R < (h : ℚ) + 1
 
 /-- Coarse choices are valid; fine choices are valid, uniquely nearest on the

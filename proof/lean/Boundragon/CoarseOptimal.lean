@@ -3,7 +3,12 @@ module
 public import Boundragon.Normalization
 public import Boundragon.Shortest
 
-/-! Canonical coarse-result optimality, including power-of-ten boundaries. -/
+/-!
+Canonical coarse-result optimality in fine-grid units: coarse points are `10*j`
+and the radius is less than 5. A closed interval then contains at most one
+coarse point. The proof splits ordinary decades from a power-of-ten boundary,
+where one-digit competitors can occur on both sides.
+-/
 
 public section
 
@@ -17,6 +22,7 @@ theorem coarse_interval_decade (x r : ℚ) (d : DecimalRep)
     pow10 (d.exponent + (d.digitIndex : ℤ)) ≤ x - r ∧
     x + r < pow10 (d.exponent + (d.digitIndex : ℤ) + 1) := by
   let N := d.exponent + (d.digitIndex : ℤ)
+  -- Every relevant decade boundary is itself a coarse point.
   have hN : 1 ≤ N := by dsimp [N]; omega
   have ho := decimal_order d hd
   have hb := abs_lt.mp hv
@@ -52,6 +58,7 @@ theorem coarse_nonpower_optimal (x r : ℚ) (d : DecimalRep)
       (hbd : b.digitIndex ≤ d.digitIndex) : d.value = b.value := by
     have horder := valid_decimal_order x r _ hinterval b hb hbv
     have hbe : 1 ≤ b.exponent := by omega
+    -- At the same order, no more digits means an exponent at least as large.
     obtain ⟨i, hi⟩ := decimal_on_coarse b hbe
     have hiv : |x - 10 * i| ≤ r := by rw [← hi]; exact hbv
     have hij := coarse_point_unique x r hr i j hiv hjv
@@ -134,6 +141,7 @@ theorem coarse_power_optimal (x r : ℚ) (m : ℤ) (d : DecimalRep) (N : ℤ)
   have hmul := mul_le_mul_of_nonneg_right hmQ hrpos.le
   have hbounds := abs_lt.mp hv
   have hclose : 20 * |x - pow10 N| < pow10 N := by
+    -- The lower endpoint is (2*m-1)*r, at least 21*r; the error is below r.
     rw [← hvalue]
     nlinarith
   refine ⟨hd, hc, hv, ?_, ?_, ?_⟩

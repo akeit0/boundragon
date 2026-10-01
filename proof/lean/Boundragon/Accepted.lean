@@ -10,6 +10,14 @@ public section
 
 namespace Boundragon
 
+/-! ## Output selection and its correctness boundary
+
+The exact mathematical input is `(10*Y/2048)*10^k`, with parsing radius
+`(10*R/2048)*10^k`. Multiplying `Y` by 10 changes from coarse to fine units;
+`10^k` restores the actual decimal magnitude. No machine float is an input
+to this reference model: deriving these coordinates from bits is still open.
+-/
+
 /-- Normalize either selected coefficient at its actual decimal scale. -/
 @[expose] def normalizedChoice (choice : CenteredChoice) (k : ℤ) : DecimalRep :=
   match choice with
@@ -17,7 +25,9 @@ namespace Boundragon
   | .fine n => normalizeDecimal n.toNat k
 
 /-- Every accepted branch produces a canonical shortest and uniquely closest
-decimal after reference normalization, including powers of ten. -/
+decimal after reference normalization, including powers of ten.
+`contract` supplies cache/interval accuracy; `hresult` only says which branch
+the executable model returned. No output optimality is assumed. -/
 theorem centered_normalized_optimal (u h c m : ℤ) (Y R : ℚ)
     (choice : CenteredChoice) (k : ℤ)
     (contract : CenteredContract2048 u h c m Y R) (hm : 11 ≤ m)
@@ -27,6 +37,7 @@ theorem centered_normalized_optimal (u h c m : ℤ) (Y R : ℚ)
   cases choice with
   | coarse j => exact centered_coarse_optimal_scaled u h c m Y R j k contract hm hresult
   | fine n =>
+    -- Fine acceptance has already proved digit bounds, validity, and optimality.
     obtain ⟨D, hd⟩ := centered_fine_optimal_scaled u h c m Y R n k contract hm hresult
     have hn : 0 < n := lt_of_lt_of_le (pow_pos (by norm_num : (0 : ℤ) < 10) D)
       hd.wellFormed.1
@@ -38,6 +49,7 @@ theorem centered_normalized_optimal (u h c m : ℤ) (Y R : ℚ)
       rw [hv, hcast]
       rfl
     have hsame := canonical_decimal_unique _ _ hw hc hd.wellFormed hd.canonical hvalue
+    -- The normalizer cannot change this already-canonical representation.
     change (normalizeDecimal n.toNat k).Optimal _ _
     rw [hsame]
     exact hd

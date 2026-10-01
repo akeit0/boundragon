@@ -42,15 +42,26 @@ theorem digit_index_exists (n : ℤ) (hn : 0 < n) : ∃ d : ℕ, HasDigitIndex n
   · exact_mod_cast Nat.pow_log_le_self 10 hN
   · exact_mod_cast Nat.lt_pow_succ_log_self (by norm_num : 1 < (10 : ℕ)) n.toNat
 
+/-! ## Decimal meaning, independent of formatting or machine widths -/
+
+/-- A positive decimal magnitude `coefficient * 10^exponent`.
+Well-formedness is a separate proved predicate; arbitrary records are allowed.
+For example `(123, -2, 2)` means `1.23`, with three significant digits. -/
 structure DecimalRep where
+  /-- Integer significand before multiplication by the decimal power. -/
   coefficient : ℤ
+  /-- Signed decimal power; negative values represent fractional decimals. -/
   exponent : ℤ
+  /-- One less than the digit count, making one-digit decimals index zero. -/
   digitIndex : ℕ
 
 @[expose] def DecimalRep.value (d : DecimalRep) : ℚ := d.coefficient * pow10 d.exponent
 
+/-- This binds the stored digit index to exact bounds `10^D ≤ coefficient < 10^(D+1)`.
+Consequently a well-formed coefficient is positive, regardless of its exponent. -/
 @[expose] def DecimalRep.WellFormed (d : DecimalRep) : Prop := HasDigitIndex d.coefficient d.digitIndex
 
+/-- Canonical coefficients have no trailing decimal zero. -/
 @[expose] def DecimalRep.Canonical (d : DecimalRep) : Prop := ¬(10 : ℤ) ∣ d.coefficient
 
 /-- Change the unit of a decimal without changing its significant digits. -/

@@ -25,11 +25,18 @@ pinned to `v4.33.0-rc1`, matching the toolchain used to check these proofs;
 On machines with limited memory, set `LEAN_NUM_THREADS=2` for the checker.
 The separate Lean CI workflow builds the project and runs the checker.
 
-`lake build` also audits every declaration in the `Boundragon` namespace for
+`lake build` also audits every loaded declaration in the `Boundragon` namespace for
 transitive axiom dependencies. It permits only Lean's standard logical axioms
 `propext`, `Classical.choice`, and `Quot.sound`. Unfinished proofs, custom axioms,
 and native-evaluation axioms cause the audit to fail. The mathematical proofs
 use no `sorry`, `admit`, or `native_decide`.
+
+The audit also prints the transitive axioms of the principal results and
+concrete accepted examples. See [the trust and assumption review](TRUST.md)
+for what is checked, what is assumed, and which obligations remain open.
+`python tools/check_lean_audit.py` (from the repository root, after building)
+also verifies that public/private unfinished proofs and custom axiom
+dependencies are rejected. CI includes those negative checks.
 
 ## Main theorem and assumptions
 
@@ -142,6 +149,53 @@ The exact mathematical sum equality is still a hypothesis. The Euclidean
 floor-sum evaluator, the verifier's interval splitting, and the concrete
 certificate instances have not yet been verified in Lean.
 
+## Product remainders and cache scaling
+
+[Remainders.lean](Boundragon/Remainders.lean) proves exact identities used by
+the fallback: two-limb product truncation, nested divisions with integer
+offsets, and the difference-of-floors indicator for a particular remainder.
+The last identity explains why the quarter-detector floor sum counts precisely
+the compiled remainder test; it does not identify that test with exact quarters.
+
+[CacheScaling.lean](Boundragon/CacheScaling.lean) proves that multiplication
+by a ratio in `[0,1)` and integer truncation turn a limb-underestimation bound
+below `E` into a center error below `E+1`. Its policy specialization maps limb
+budgets 1, 3, and 5 to center budgets 2, 4, and 6. It also proves that an exact
+high limb gives the exact radius floor after integer division. Actual stored
+cache-limb bounds and reconstructed radius identities remain uncertified in
+Lean; the theorem cannot infer those identities from a center-error bound.
+
+## Fallback rounding policy
+
+[Rounding.lean](Boundragon/Rounding.lean) defines exact half-up rounding and
+a parity correction for ties. `round_ties_to_even_correct` proves nearestness
+among all integers and an even answer at a genuine tie, including negative
+inputs. Unlike accepted-filter optimality, `NearestEven` allows ties.
+
+[FallbackRounding.lean](Boundragon/FallbackRounding.lean) retains the actual
+`+6` expression and quarter override from `finish_regular`. It proves the
+override is subtraction of one from that expression's global fine integer.
+`fallback_fine_nearest_even` then derives the nearest/even policy from these
+explicit numerical certificate facts:
+
+1. The compiled `+6` integer equals exact half-up rounding.
+2. The compiled remainder test detects exactly the true quarters.
+3. Every halfway value in the domain is a quarter or three quarters.
+
+These facts are still theorem hypotheses. The result establishes the policy
+implication, not the validity of the certificate data or complete fallback
+shortestness. They remain listed as open obligations below.
+
+## Concrete witnesses
+
+[Examples.lean](Boundragon/Examples.lean) proves complete contracts, actual
+branch results, and decimal optimality for a coarse power of ten, an ordinary
+coarse value, and a fine value. At scale `10^-2` they produce canonical `1`,
+`1.2`, and `1.15`, each with radius `0.025`. These witnesses establish that
+the model and its contracts admit accepted inputs; they are not evidence of
+the corresponding facts for any compiled cache entry. The module also proves
+the two fallback quarter outputs and positive/negative even-tie examples.
+
 ## Supporting results
 
 The proof separates general arithmetic from the binary64 specialization:
@@ -159,6 +213,11 @@ The proof separates general arithmetic from the binary64 specialization:
 | [CoarseOptimal.lean](Boundragon/CoarseOptimal.lean) | Coarse optimality and power-of-ten boundary handling |
 | [Accepted.lean](Boundragon/Accepted.lean) | Executable normalized branch model and combined decimal optimality theorem |
 | [Certificates.lean](Boundragon/Certificates.lean) | Ordered floor-sum certificate soundness principle |
+| [Remainders.lean](Boundragon/Remainders.lean) | Nested truncations, two-limb products, and remainder indicators |
+| [CacheScaling.lean](Boundragon/CacheScaling.lean) | Limb accuracy implies center-error bounds; exact high-limb radius floors |
+| [Rounding.lean](Boundragon/Rounding.lean) | Exact nearest-integer ties-to-even policy |
+| [FallbackRounding.lean](Boundragon/FallbackRounding.lean) | Actual +6/quarter arithmetic and conditional policy implication |
+| [Examples.lean](Boundragon/Examples.lean) | Nonvacuous contracts and accepted outputs; tie examples |
 | [Audit.lean](Boundragon/Audit.lean) | Build-time transitive axiom audit |
 
 [Centered.lean](Boundragon/Centered.lean) remains a compatibility import.
@@ -199,9 +258,14 @@ A full converter theorem still needs:
    assumptions.
 2. The complete fallback, the Euclidean floor-sum evaluator and concrete
    floor-sum/congruence certificates, exceptional powers of two, and
-   ties-to-even handling. The ordered-sum implication is proved, but neither
-   the evaluator nor the certificate data are yet connected to it.
+   the certificate facts connecting `+6` and the quarter detector to exact
+   input. The ordered-sum and nearest/even policy implications, nested
+   truncation identities, and remainder indicator are proved, but neither
+   the evaluator nor the certificate data are yet connected to them.
 3. Actual cache generation/reconstruction bounds and exponent/shift helpers.
+   The general conversion from limb bounds to center-error bounds and the
+   exact-high-limb radius-floor identity are proved; actual table bounds and
+   reconstructed radius identities remain open.
 4. Correspondence of C++ normalization and shortcuts with the verified
    reference normalizer, special values, sign handling, and the separate
    binary32 kernels.
@@ -209,7 +273,8 @@ A full converter theorem still needs:
    shifts, overflow bounds, dispatch, and optional assembly.
 
 The current results are kernel-checked proofs of filter safety, normalization,
-both accepted branches' decimal optimality under explicit contracts, and a
-certificate soundness principle. They are not an end-to-end proof of C++,
+both accepted branches' decimal optimality under explicit contracts,
+remainder/product identities, cache-scaling bounds, and rounding/certificate
+policy implications. They are not an end-to-end proof of C++,
 compiler translation, or machine code, and they do not replace the existing
 certificates and tests.

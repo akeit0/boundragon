@@ -67,33 +67,76 @@ trade speed for space: [binary32 Compact](docs/binary32_implementation.md) and
 ## Recorded performance
 
 Intel Core i7-13700F, WSL2 x86-64, GCC 11.4.0, `-O3 -march=native -flto`;
-recorded 2026-10-01. This table covers random finite-bit inputs. Time includes
-canonical conversion and normalization, excluding parsing and formatting.
-Linked footprint is control-subtracted `.text + .rodata` after LTO and section
-GC, including alignment; it is separate from numeric cache payload.
+recorded 2026-10-01, with two seeds and eleven trials per seed. Times below are
+median thread CPU **ns/value**; lower is better. Linked bytes are
+control-subtracted `.text + .rodata` after LTO and section GC, including
+alignment and excluding the harness. These are measured workload comparisons,
+not a universal speed claim.
 
-| Source format | Default policy | Median ns/value | Linked bytes |
-| --- | --- | ---: | ---: |
-| binary32 | Fast | 5.814 | 4,749 |
-| binary64 | Balanced | 6.813 | 7,793 |
+### Pure canonical conversion
 
-Binary32 Fast leads the compared Dragonbox and zmij adapters in the recorded
-pools. Binary64 Balanced leads on random bits; Dragonbox full leads on short
-and mixed decimals and simple values. Results depend on the input distribution,
-compiler, and machine. [Full canonical comparisons](benchmarks/results/2026-10-01/canonical/REPORT.md)
-include competitors, all corpora, paired intervals, and size measurements.
+Every implementation returns the same contract: coefficient without trailing
+decimal zeroes, exponent, and sign. Conversion and normalization are timed;
+parsing and text formatting are excluded.
 
-[Stringification benchmarks](benchmarks/results/2026-10-01/integrated-writers/REPORT.md)
-compare **integrated writers only**, including conversion and final ASCII.
-The Balanced/xjb-tail writer trades speed for a smaller linked footprint on
-random binary64 inputs: 11.06 ns/value and 14,664 bytes, compared with native
-xjb's 9.14 ns/value and 19,704 bytes. These writers are benchmark-only; they
-are not a public string API.
+**binary32 — Fast prioritizes conversion speed.** It uses less time than the
+compared Dragonbox and zmij adapters on all eight recorded corpora. Its linked
+footprint is larger than Dragonbox full's, but smaller than either zmij adapter's.
 
-The repository keeps [benchmark summaries](benchmarks/results/README.md),
-not raw development logs or measurement archives. [Benchmark reproduction](docs/benchmarks.md)
-documents fresh runs with source hashes and raw data saved under ignored build
-directories.
+| Implementation | Random finite bits | 1–6 decimal digits | Mixed 1–9 digits | Simple values | Linked bytes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **Boundragon Fast** | **5.814** | **3.970** | **4.511** | **3.812** | **4,749** |
+| Dragonbox full | 8.648 | 5.265 | 6.589 | 5.526 | 1,510 |
+| zmij serial | 8.415 | 16.210 | 15.630 | 12.801 | 23,226 |
+| zmij grouped | 7.368 | 6.019 | 6.857 | 6.378 | 23,315 |
+
+**binary64 — Balanced combines competitive speed with a moderate footprint.**
+On random finite bits it takes 19.3% less CPU time than Dragonbox full in the
+paired trials, with 30.0% fewer linked bytes. It also leads on the recorded hot
+random pool and 16/17-digit corpora. Dragonbox full uses less time on short and
+mixed decimals and simple values; Dragonbox compact uses much less space.
+
+| Implementation | Random finite bits | 1–6 decimal digits | Mixed 1–17 digits | Simple values | Linked bytes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **Boundragon Balanced** | **6.813** | **7.182** | **7.049** | **8.058** | **7,793** |
+| Dragonbox full | 8.408 | 6.400 | 6.740 | 6.487 | 11,135 |
+| Dragonbox compact | 11.451 | 9.606 | 9.943 | 9.241 | 1,990 |
+| zmij serial | 9.307 | 27.574 | 23.242 | 18.972 | 23,267 |
+| zmij grouped | 10.686 | 17.383 | 22.724 | 10.637 | 23,356 |
+
+[Full canonical results](benchmarks/results/2026-10-01/canonical/REPORT.md)
+include all corpora, smaller Boundragon policies, and paired confidence intervals.
+
+### Stringification: integrated binary64 writers
+
+These timings include conversion and final ASCII in a caller-owned buffer.
+Boundragon's rounding kernel feeds the upstream digit-writing tail directly;
+native writers remain unmodified. All entries are integrated writers.
+
+| Writer | Random finite bits | Simple values | Exact integers | Subnormals | Linked bytes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **Boundragon Balanced + xjb tail** | **11.06** | **10.52** | **8.06** | **14.05** | **14,664** |
+| Native xjb | 9.14 | 10.93 | 9.19 | 9.09 | 19,704 |
+| Native compact xjb | 22.61 | 13.91 | 15.96 | 15.72 | 2,164 |
+| Boundragon Balanced + zmij tail | 10.92 | 10.52 | 7.65 | 13.93 | 18,104 |
+| Native zmij | 10.25 | 11.15 | 9.90 | 10.28 | 24,168 |
+
+**Balanced + xjb tail is the speed/size compromise:** 25.6% fewer linked bytes
+than native xjb, at 22.6% more CPU time on random bits in the paired trials.
+It takes less time on simple values and exact integers, but 54.1% more on
+subnormals. Compact xjb is much smaller and takes more time on every recorded
+corpus. The Boundragon writers are experimental benchmark implementations;
+the public headers currently expose numeric components only.
+
+[Full integrated-writer results](benchmarks/results/2026-10-01/integrated-writers/REPORT.md)
+include all eight corpora, paired intervals, and output validation. Percentage
+time comparisons use the reports' paired trial ratios, which can differ from
+ratios of the displayed medians. Results depend on the input distribution,
+compiler, and machine.
+
+[Benchmark methodology](docs/benchmarks.md) describes the harnesses and
+reproduction commands. The repository keeps the recorded summaries rather
+than raw development logs or measurement archives.
 
 ## Build and verification
 

@@ -51,9 +51,9 @@ uncertain cases use a complete integer converter. Its contributions are
 centered acceptance guards, explicit cache-error contracts, and precision
 allocation tailored to each format.
 
-The main Boundragon algorithm was invented by **GPT-6 Astra and GPT-6.1 Sol**
-during development with [akeit0](https://github.com/akeit0). This credits the
-centered decision guards and their error-bound design described here.
+The main Boundragon algorithm was invented by **GPT-6 Astra and GPT-6.1 Sol**.
+This credits the centered decision guards and their error-bound design described
+here.
 
 The coarse/fine decimal grids are prior art. Decimal scaling and exact finishing
 are credited to xjb and zmij. See the [algorithm](docs/algorithm.md),

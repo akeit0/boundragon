@@ -5,9 +5,8 @@ decimal coefficient and exponent. Its focus is to **certify decimal decisions
 with less precision**, using centered error bounds and format-specific integer
 arithmetic. A complete integer converter resolves uncertain cases.
 
-The main Boundragon algorithm was invented by **GPT-6 Astra and GPT-6.1 Sol**
-during development with [akeit0](https://github.com/akeit0). This attribution
-covers the centered decision guards and their error-bound design. The decimal
+The main Boundragon algorithm was invented by **GPT-6 Astra and GPT-6.1 Sol**.
+This attribution covers the centered decision guards and their error-bound design. The decimal
 grid geometry, scaling, and complete finishing techniques retain the prior-art
 credits described below.
 

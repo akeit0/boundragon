@@ -3,20 +3,25 @@ module
 public import Boundragon.Coarse
 public import Boundragon.Fine
 
-/-! Binary64 decoding, guard identities, and the 2048/1024 specialization. -/
+/-!
+Binary64 decoding, guard identities, and the 2048/1024 specialization.
+The filter uses 2048 units per coarse decimal step and 2048/10 per fine step.
+1024 is its half-step; it is also the modulus after halving the fine numerator.
+Definitions model exact signed arithmetic. C++ widths/overflow are separate.
+-/
 
 public section
 
 namespace Boundragon
 
 /-- Coarse quotient after moving the estimate to the center of its error range. -/
-def coarseIndex2048 (u c : ℤ) : ℤ := (u + 1024 + c) / 2048
+@[expose] def coarseIndex2048 (u c : ℤ) : ℤ := (u + 1024 + c) / 2048
 
 /-- Signed residual of the centered estimate relative to its coarse candidate. -/
-def centeredResidual2048 (u c : ℤ) : ℤ := (u + 1024 + c) % 2048 - 1024
+@[expose] def centeredResidual2048 (u c : ℤ) : ℤ := (u + 1024 + c) % 2048 - 1024
 
 /-- Coarse coefficient plus the certified signed fine increment. -/
-def fineCoefficient2048 (j w : ℤ) : ℤ := 10 * j + (5 * w + 512) / 1024
+@[expose] def fineCoefficient2048 (j w : ℤ) : ℤ := 10 * j + (5 * w + 512) / 1024
 
 /-- Mathematical quotient/remainder form of the binary64 centered decoding. -/
 theorem centered_decode_2048 (u c : ℤ) :

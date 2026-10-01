@@ -44,7 +44,7 @@ source correspondence, C++ arithmetic semantics and correct compiler
 translation. Sampled compiled tests exercise that implementation bridge.
 See [the proof and its limits](proof.md#8-reproduction-and-remaining-limits).
 
-## Optional Lean filter proof
+## Optional Lean proofs
 
 The [Lean project](../proof/lean/README.md) has a pinned toolchain and mathlib
 dependency. With `elan` installed, run:
@@ -57,9 +57,16 @@ lake env leanchecker Boundragon
 
 The first build may fetch dependencies; the project README describes how to
 download their precompiled cache. The build checks the centered binary64 guard
-proofs and audits transitive axioms. The checker rechecks the compiled proof
-environment. This is separate from CTest and does not establish the complete
-converter's shortestness, fallback correctness, or C++ source correspondence.
+proofs, reference normalization, both accepted branches' canonical shortestness
+and unique closest selection under the documented contracts, and the ordered
+floor-sum certificate principle. It also checks product/remainder identities,
+cache-scaling bounds, nearest/even rounding-policy implications, and concrete
+witnesses for the accepted model. The axiom audit covers public and private
+declarations; CI tests rejection of unfinished proofs and custom dependencies.
+The checker rechecks the compiled proof
+environment. This is separate from CTest; complete-converter correctness,
+including small-subnormal exceptions, fallback, concrete cache contracts, and
+C++ source correspondence, remains unfinished.
 
 ## Read-only table checks
 

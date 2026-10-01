@@ -1,10 +1,12 @@
-# Lean proof of the centered binary64 filter
+# Lean proofs of normalized centered binary64 conversion
 
 This project formalizes the centered decision guards from
 [the binary64 correctness argument](../../docs/proof.md#5-centered-filters-for-even-error-bounds).
 It is a partial formalization of Boundragon, with an exact-integer decision
-model and exact rational geometry. It does not yet prove the complete public
-converter correct.
+model, a terminating reference normalizer, exact rational geometry, decimal
+digit counts, and a floor-sum certificate principle. Every accepted normalized
+branch is proved optimal under the contracts below and `m >= 11`. The complete
+public converter is not yet proved correct.
 
 ## Reproduce
 
@@ -12,7 +14,7 @@ Install Lean's `elan` toolchain manager, then run from the repository root:
 
 ```sh
 cd proof/lean
-lake exe cache get Mathlib.Data.Rat.Floor Mathlib.RingTheory.Coprime.Lemmas Mathlib.Tactic.Linarith Mathlib.Tactic.NormNum Mathlib.Tactic.Ring Mathlib.Tactic.Positivity
+lake exe cache get Mathlib.Data.Rat.Floor Mathlib.Data.Nat.Log Mathlib.Algebra.Order.BigOperators.Group.Finset Mathlib.RingTheory.Coprime.Lemmas Mathlib.Tactic.Linarith Mathlib.Tactic.NormNum Mathlib.Tactic.Ring Mathlib.Tactic.Positivity
 lake build
 lake env leanchecker Boundragon
 ```
@@ -23,11 +25,18 @@ pinned to `v4.33.0-rc1`, matching the toolchain used to check these proofs;
 On machines with limited memory, set `LEAN_NUM_THREADS=2` for the checker.
 The separate Lean CI workflow builds the project and runs the checker.
 
-`lake build` also audits every declaration in the `Boundragon` namespace for
+`lake build` also audits every loaded declaration in the `Boundragon` namespace for
 transitive axiom dependencies. It permits only Lean's standard logical axioms
 `propext`, `Classical.choice`, and `Quot.sound`. Unfinished proofs, custom axioms,
 and native-evaluation axioms cause the audit to fail. The mathematical proofs
 use no `sorry`, `admit`, or `native_decide`.
+
+The audit also prints the transitive axioms of the principal results and
+concrete accepted examples. See [the trust and assumption review](TRUST.md)
+for what is checked, what is assumed, and which obligations remain open.
+`python tools/check_lean_audit.py` (from the repository root, after building)
+also verifies that public/private unfinished proofs and custom axiom
+dependencies are rejected. CI includes those negative checks.
 
 ## Main theorem and assumptions
 
@@ -59,7 +68,175 @@ closer than every other fine-grid coefficient. Exact decimal-half ties are
 therefore excluded. A rejected guard returns `none`, representing fallback;
 the theorem makes no assertion about a fallback result.
 
+[Accepted.lean](Boundragon/Accepted.lean) defines `normalizedDecision2048`,
+which applies `normalizeDecimal` to either accepted coefficient at its actual
+decimal scale. Its main theorem, `centered_normalized_decision_sound`, proves
+that every `some d` result is canonical, strictly valid, shortest, and uniquely
+closest among equally short valid decimal values. It uses the same contract,
+adds `m >= 11`, and holds for every integer decimal scale `k`. Rejected guards
+still return `none`; the definition does not implement fallback.
+
+## Fine-result shortestness and closest selection
+
+[Shortest.lean](Boundragon/Shortest.lean) strengthens fine acceptance to
+`centered_fine_optimal_scaled`. Under the same contract, with `m >= 11`, a
+result `some (.fine n)` produces a decimal `n * 10^k` that is:
+
+- Strictly inside the rounding interval.
+- Canonical: its coefficient has no trailing decimal zero.
+- Shortest among **all** valid positive decimal representations, allowing
+  every integer exponent.
+- Uniquely closest among the equally short valid decimal values.
+
+Here `k` is any integer decimal scale. The center and radius are respectively
+`(10*Y/2048)*10^k` and `(10*R/2048)*10^k`. `DecimalRep` stores a coefficient,
+exponent, and `digitIndex`; `digitIndex + 1` is the significant-digit count.
+The theorem constructs a digit index satisfying the exact power-of-ten bounds.
+
+The proof shows that an interval with no coarse-grid point cannot cross a
+decimal-decade boundary. All valid decimals then have the same decimal order;
+a shorter coefficient would require an exponent on the excluded coarse grid.
+For equal digit counts, nearest-integer uniqueness gives closest selection.
+`decimal_optimal_shift` preserves this result under multiplication by any
+decimal power, including negative powers.
+
+Competitors may lie on either closed endpoint and need not be canonical.
+This larger comparison set covers either parity's parsing interval. The
+selected output is strictly interior, so endpoint parity does not affect this
+branch. The `m >= 11` hypothesis explicitly excludes small significands; it
+is not yet derived from the C++ dispatch.
+
+## Coarse-result normalization and optimality
+
+[Normalization.lean](Boundragon/Normalization.lean) defines a terminating
+reference algorithm that divides positive coefficients by ten until no
+trailing zero remains. `normalize_decimal_correct` proves value preservation,
+canonicality, exact digit bounds, and a nondecreasing exponent.
+`canonical_exponent_max` and `canonical_digits_min` prove that a canonical
+representation has the largest exponent and fewest digits for its value;
+`canonical_decimal_unique` proves that representation unique.
+
+[CoarseOptimal.lean](Boundragon/CoarseOptimal.lean) proves
+`centered_coarse_optimal_scaled`. For `some (.coarse j)` and `m >= 11`,
+`normalizeDecimal j.toNat (k+1)` satisfies the same optimality specification
+as the accepted fine result, at any integer scale `k`.
+
+When the accepted value is not a power of ten, coarse-grid uniqueness excludes
+every decade boundary from the interval. All equally short or shorter
+competitors therefore lie on the coarse grid and must be the same value.
+Canonicalization gives the minimum digit count.
+
+For a power of ten `T`, one digit is already minimal, but the proof also
+compares against one-digit decimals across the boundary. All other such
+decimals lie at or below `0.9*T` or at or above `2*T`. The interval geometry
+and `m >= 11` imply `20*abs(x-T) < T`, making `T` uniquely closest.
+
+These results complete the mathematical two-grid argument for accepted
+branches under the regular contract and significand restriction. The reference
+normalizer is verified; its correspondence with the C++ normalization routines
+and shortcuts remains to be proved.
+
+## Floor-sum certificate principle
+
+[Certificates.lean](Boundragon/Certificates.lean) proves
+`ordered_sum_eq_pointwise`: equal finite sums of pointwise ordered integer
+sequences force equality at every index. `affine_floor_sum_eq` specializes
+this to floors of affine rational functions, proving their ordering from
+endpoint inequalities on each supplied interval. This formalizes the
+[certificate principle](../../docs/proof.md#why-exact-floor-sums-prove-pointwise-equality).
+
+The exact mathematical sum equality is still a hypothesis. The Euclidean
+floor-sum evaluator, the verifier's interval splitting, and the concrete
+certificate instances have not yet been verified in Lean.
+
+## Product remainders and cache scaling
+
+[Remainders.lean](Boundragon/Remainders.lean) proves exact identities used by
+the fallback: two-limb product truncation, nested divisions with integer
+offsets, and the difference-of-floors indicator for a particular remainder.
+The last identity explains why the quarter-detector floor sum counts precisely
+the compiled remainder test; it does not identify that test with exact quarters.
+
+[CacheScaling.lean](Boundragon/CacheScaling.lean) proves that multiplication
+by a ratio in `[0,1)` and integer truncation turn a limb-underestimation bound
+below `E` into a center error below `E+1`. Its policy specialization maps limb
+budgets 1, 3, and 5 to center budgets 2, 4, and 6. It also proves that an exact
+high limb gives the exact radius floor after integer division.
+[CacheGeneration.lean](Boundragon/CacheGeneration.lean) now derives the exact-high
+cache's accuracy from the general generation formula. Correspondence to the
+stored literals and compact reconstructed radius identities remain open; a
+center-error bound alone cannot establish those radius identities.
+
+## Fallback rounding policy
+
+[Rounding.lean](Boundragon/Rounding.lean) defines exact half-up rounding and
+a parity correction for ties. `round_ties_to_even_correct` proves nearestness
+among all integers and an even answer at a genuine tie, including negative
+inputs. Unlike accepted-filter optimality, `NearestEven` allows ties.
+
+[FallbackRounding.lean](Boundragon/FallbackRounding.lean) retains the actual
+`+6` expression and quarter override from `finish_regular`. It proves the
+override is subtraction of one from that expression's global fine integer.
+`fallback_fine_nearest_even` then derives the nearest/even policy from these
+explicit numerical certificate facts:
+
+1. The compiled `+6` integer equals exact half-up rounding.
+2. The compiled remainder test detects exactly the true quarters.
+3. Every halfway value in the domain is a quarter or three quarters.
+
+These facts are still theorem hypotheses. The result establishes the policy
+implication, not the validity of the certificate data or complete fallback
+shortestness. They remain listed as open obligations below.
+
+## Concrete witnesses
+
+[Examples.lean](Boundragon/Examples.lean) proves complete contracts, actual
+branch results, and decimal optimality for a coarse power of ten, an ordinary
+coarse value, and a fine value. At scale `10^-2` they produce canonical `1`,
+`1.2`, and `1.15`, each with radius `0.025`. These witnesses establish that
+the model and its contracts admit accepted inputs; they are not evidence of
+the corresponding facts for any compiled cache entry. The module also proves
+the two fallback quarter outputs and positive/negative even-tie examples.
+
 ## Supporting results
+
+### Cache generation and integer ranges
+
+[CacheGeneration.lean](Boundragon/CacheGeneration.lean) proves the generation
+formula generally, rather than verifying a list of cache entries. For any
+positive integer numerator and denominator, the difference of their binary
+logarithms gives an exponent estimate that needs at most one downward
+correction. Exact comparison supplies the correction and proves
+`2^E <= numerator/denominator < 2^(E+1)`.
+
+At every positive width, the integer rescaling/division then returns the
+floor of the normalized rational significand. The proof derives both the
+less-than-one error and the range `[2^(width-1),2^width)`. Separate lemmas
+identify the generator's numerator-shift and denominator-shift branches.
+Specializing to `10^p` works for every signed decimal exponent, without a
+finite enumeration. The 128-bit cache divided by `2^64` equals the separately
+generated 64-bit floor. Center-error and radius-floor theorems consume this
+generated value and derive its accuracy, rather than assuming it.
+
+[IntegerRanges.lean](Boundragon/IntegerRanges.lean) proves the hidden-bit,
+multiplier, widening-product, centered-addition, signed residual, and output
+coefficient ranges. The maximum normal multiplier leaves 2048 units below
+`2^64`; the largest centered offset is 1027, so addition cannot wrap.
+
+[ExponentRanges.lean](Boundragon/ExponentRanges.lean) proves analytically that
+the exact scaling shift `q+E+12` lies in `[8,11]` whenever `k` is the exact
+decimal order of `2^q`. Two endpoint comparisons and monotonicity bound all
+normal cache indices. There is no per-exponent proof enumeration. The module
+also derives product, centering, and radius ranges from generated-cache
+bounds and checks the signed domains of the exponent-helper multiplications.
+It does **not** yet prove that the fixed-point `dec_exp` and `exp_shift`
+implementations return those exact mathematical exponents and shifts.
+
+`python tools/generate_decimal_tables.py --check` compares the checked-in
+header with the generator's entire output; CI runs it before the Lean build.
+This is an artifact consistency check, outside Lean. The kernel theorem is
+about the general arithmetic generation model, not Python execution or the
+header parser. Compact-anchor selection/reconstruction is also still separate.
 
 The proof separates general arithmetic from the binary64 specialization:
 
@@ -70,6 +247,20 @@ The proof separates general arithmetic from the binary64 specialization:
 | [Fine.lean](Boundragon/Fine.lean) | Rounding stability for an arbitrary positive integer modulus |
 | [Binary64.lean](Boundragon/Binary64.lean) | Named decoder/coefficient definitions and the 2048/1024 arithmetic |
 | [Decision.lean](Boundragon/Decision.lean) | Filter branches, input contract, and combined soundness theorem |
+| [Decimal.lean](Boundragon/Decimal.lean) | Decimal representations, significant digits, orders, and scaling |
+| [Shortest.lean](Boundragon/Shortest.lean) | Fine-branch canonical shortestness and unique closest selection |
+| [Normalization.lean](Boundragon/Normalization.lean) | Terminating reference normalization, value preservation, and canonical uniqueness |
+| [CoarseOptimal.lean](Boundragon/CoarseOptimal.lean) | Coarse optimality and power-of-ten boundary handling |
+| [Accepted.lean](Boundragon/Accepted.lean) | Executable normalized branch model and combined decimal optimality theorem |
+| [Certificates.lean](Boundragon/Certificates.lean) | Ordered floor-sum certificate soundness principle |
+| [Remainders.lean](Boundragon/Remainders.lean) | Nested truncations, two-limb products, and remainder indicators |
+| [CacheScaling.lean](Boundragon/CacheScaling.lean) | Limb accuracy implies center-error bounds; exact high-limb radius floors |
+| [CacheGeneration.lean](Boundragon/CacheGeneration.lean) | General exact generation formula, cache widths/floors/error, and high-limb identity |
+| [IntegerRanges.lean](Boundragon/IntegerRanges.lean) | Normal shifts/products/centering and signed/output ranges |
+| [ExponentRanges.lean](Boundragon/ExponentRanges.lean) | Analytic exact shift/index bounds and generated-cache arithmetic ranges |
+| [Rounding.lean](Boundragon/Rounding.lean) | Exact nearest-integer ties-to-even policy |
+| [FallbackRounding.lean](Boundragon/FallbackRounding.lean) | Actual +6/quarter arithmetic and conditional policy implication |
+| [Examples.lean](Boundragon/Examples.lean) | Nonvacuous contracts and accepted outputs; tie examples |
 | [Audit.lean](Boundragon/Audit.lean) | Build-time transitive axiom audit |
 
 [Centered.lean](Boundragon/Centered.lean) remains a compatibility import.
@@ -92,26 +283,46 @@ The branch model follows the mathematical decisions of
 [`centered_filter.h`](../../include/boundragon/detail/centered_filter.h) and
 [`tiny_nearest_finish`](../../include/boundragon/detail/compact_cache.h).
 Its coarse/fine tags make the selected grid explicit; the C++ converter packs
-either choice into decimal components and may normalize trailing zeroes.
+either choice into decimal components and may normalize trailing zeroes. The
+Lean reference converter explicitly normalizes both branches.
 
 ## Remaining proof obligations
 
-The cache/error/radius hypotheses above are parameters of the theorem, not
-additional axioms. The existing exact certificates check them for the caches,
-but those certificate checkers have not yet been proved sound in Lean.
+The cache/error/radius hypotheses above are parameters of the accepted-output
+theorem, not additional axioms. The general exact-high cache generation,
+floor/error/width properties, and resulting center-error and radius-floor
+bounds are now proved. Reconstruction certificates and the complete connection
+from actual C++ dispatch/data/helpers to that contract remain open.
 
 A full converter theorem still needs:
 
-1. The two-grid shortestness argument, including decimal-decade crossings,
-   canonical digit counts, and the small-subnormal exceptions.
-2. The complete fallback, its floor-sum/congruence certificates, exceptional
-   powers of two, and ties-to-even handling.
-3. Actual cache generation/reconstruction bounds and exponent/shift helpers.
-4. Canonical normalization and shortcuts, special values, sign handling, and
-   the separate binary32 kernels.
+1. The small-subnormal exceptions and derivation of the regular contract and
+   `m >= 11` from actual dispatch. Both accepted branches' canonical
+   shortestness and unique closest selection, including power-of-ten
+   boundaries and arbitrary decimal scaling, are proved under these
+   assumptions.
+2. The complete fallback, the Euclidean floor-sum evaluator and concrete
+   floor-sum/congruence certificates, exceptional powers of two, and
+   the certificate facts connecting `+6` and the quarter detector to exact
+   input. The ordered-sum and nearest/even policy implications, nested
+   truncation identities, and remainder indicator are proved, but neither
+   the evaluator nor the certificate data are yet connected to them.
+3. Compact cache reconstruction and radius identities, and correctness of the
+   fixed-point exponent/shift helpers. General exact generation, both cache
+   widths, their high-limb relationship, error bounds, and analytic exact
+   shift/index ranges are proved. Correspondence of the generator model to
+   Python/header literals is still outside the kernel proof.
+4. Correspondence of C++ normalization and shortcuts with the verified
+   reference normalizer, special values, sign handling, and the separate
+   binary32 kernels.
 5. A correspondence proof for the C++ fixed-width operations, masks, signed
-   shifts, overflow bounds, dispatch, and optional assembly.
+   shifts, dispatch, and optional assembly. Normal product and centered-addition
+   bounds are proved for generated cache values and shifts up to 11; deliberate
+   unsigned wrapping and the complete compiled operation sequence remain open.
 
-The current result is a kernel-checked proof of filter safety under explicit
-contracts. It is not an end-to-end proof of C++, compiler translation, or
-machine code, and it does not replace the existing certificates and tests.
+The current results are kernel-checked proofs of filter safety, normalization,
+both accepted branches' decimal optimality under explicit contracts,
+remainder/product identities, cache-scaling bounds, and rounding/certificate
+policy implications. They are not an end-to-end proof of C++,
+compiler translation, or machine code, and they do not replace the existing
+certificates and tests.

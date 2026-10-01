@@ -11,6 +11,9 @@ MASK=(1<<64)-1
 MIN,MAX=-293,324
 
 def power(k, bits=128):
+    # CacheGeneration.lean proves this bit-length/correction/rescale/floor
+    # formula and its width/error bounds for every positive rational input.
+    # The compact-anchor search below remains a separate certificate task.
     num,den=(10**k,1) if k>=0 else (1,10**-k)
     e=num.bit_length()-den.bit_length()
     if e>=0:

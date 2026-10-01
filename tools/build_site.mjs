@@ -95,12 +95,13 @@ for(const [source,output]of pages){
   const title=tokens.find(t=>t.type==='inline')?.content??'Boundragon';
   const home=relative(output,'index.html'),css=relative(output,'assets/explorer.css');
   const mathCss=relative(output,'assets/temml.css');
+  const repoLink=`<a class="repo-link" href="https://github.com/akeit0/boundragon" aria-label="GitHub repository" title="GitHub repository"><img src="${relative(output,'assets/github.svg')}" width="24" height="24" alt="" aria-hidden="true"></a>`;
   const note=source.includes('/REPORT.md')?'<p class="record-note">Recorded before the Boundragon rename. Original method IDs and measurements are preserved. <a href="index.html">Measurement provenance</a>.</p>':'';
-  write(output,`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)} — Boundragon</title><link rel="stylesheet" href="${mathCss}"><link rel="stylesheet" href="${css}"></head><body class="document-page"><header class="masthead"><a class="brand" href="${home}">Boundragon</a><nav aria-label="Documentation"><a href="${relative(output,'getting-started.html')}">C++ library</a> · <a href="${relative(output,'algorithm.html')}">Algorithm</a> · <a href="${relative(output,'benchmarks.html')}">Benchmarks</a></nav></header><main class="document">${note}${markdown.renderer.render(tokens,markdown.options,{})}</main><footer><a href="${home}">Algorithm explorer</a><a href="${relative(output,'attribution.html')}">License and attribution</a></footer></body></html>\n`);
+  write(output,`<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)} — Boundragon</title><link rel="stylesheet" href="${mathCss}"><link rel="stylesheet" href="${css}"></head><body class="document-page"><header class="masthead"><a class="brand" href="${home}">Boundragon</a><div class="header-actions"><nav aria-label="Documentation"><a href="${relative(output,'getting-started.html')}">C++ library</a> · <a href="${relative(output,'algorithm.html')}">Algorithm</a> · <a href="${relative(output,'benchmarks.html')}">Benchmarks</a></nav>${repoLink}</div></header><main class="document">${note}${markdown.renderer.render(tokens,markdown.options,{})}</main><footer><a href="${home}">Algorithm explorer</a><a href="${relative(output,'attribution.html')}">License and attribution</a></footer></body></html>\n`);
 }
 write('index.html',fs.readFileSync(path.join(root,'docs/index.html')));
 for(const name of fs.readdirSync(path.join(root,'docs/assets'))){
-  if(/\.(?:js|css|txt|woff2)$/.test(name))write('assets/'+name,fs.readFileSync(path.join(root,'docs/assets',name)));
+  if(/\.(?:js|css|svg|txt|woff2)$/.test(name))write('assets/'+name,fs.readFileSync(path.join(root,'docs/assets',name)));
 }
 write('.nojekyll','');
 write('site-files.json',JSON.stringify([...published,'site-files.json'].sort(),null,2)+'\n');

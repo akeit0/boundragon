@@ -75,6 +75,7 @@ const pageText=[
   ['.context-notes a:nth-of-type(1)','アルゴリズムの全文（英語）↗'],['.context-notes a:nth-of-type(2)','Q40の上限と証明（英語）↗'],['.context-notes a:nth-of-type(3)','C++での使い方（英語）↗'],['.context-notes a:nth-of-type(4)','ベンチマークの方法（英語）↗'],['footer > p:first-of-type','最短 · 最も近い · 同距離なら偶数'],['footer > p:last-of-type','ローカルで動作 · <a href="assets/Unlicense.txt">Unlicense</a> + <a href="assets/zmij-MIT.txt">継承したMIT</a>'],['.noscript','JavaScriptを有効にすると変換をたどれます。上の説明はそのまま読めます。']
 ];
 const attributes=[
+  ['.repo-link','aria-label','GitHubリポジトリ'],['.repo-link','title','GitHubリポジトリ'],
   ['#explorer','aria-label','浮動小数点から10進数への対話的な変換'],['#input-mode','aria-label','入力の表現'],['#presets','aria-label','入力のプリセット'],['#bit-strip','aria-label','IEEE 754のビットフィールド'],
   ['.step-toolbar','aria-label','変換ステップの移動'],['#step-select','aria-label','変換ステップを選ぶ'],['.view-switch','aria-label','分岐経路の表示方法'],['#flow-tools','aria-label','フローチャートの倍率'],
   ['#zoom-out','aria-label','フローチャートを縮小'],['#zoom-in','aria-label','フローチャートを拡大'],['#zoom-fit','title','標準のチャートサイズに戻す'],['#flowchart','aria-label','変換全体の判定フローチャート'],['#close-flow','aria-label','拡大したフローチャートを閉じる']

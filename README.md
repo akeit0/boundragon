@@ -160,9 +160,12 @@ binary64 filter's decision safety under explicit cache/interval contracts.
 Both accepted branches additionally have canonical shortestness and unique
 closest selection proved after reference normalization for significands
 `m >= 11`, at any decimal scale, including power-of-ten boundaries.
-The ordered floor-sum certificate principle is also proved. This remains a
-partial formalization: small-subnormal exceptions, fallback correctness,
-concrete cache contracts, and C++ source correspondence are unfinished.
+The ordered floor-sum certificate principle and the general exact cache
+generation formula are also proved, including cache widths, floor/error bounds,
+high-limb extraction, and normal arithmetic ranges. This remains a partial
+formalization: small-subnormal exceptions, fallback correctness, compact cache
+reconstruction, compiled exponent helpers, and C++ source correspondence are
+unfinished.
 The [trust review](proof/lean/TRUST.md) distinguishes checked proofs from
 remaining numerical certificate assumptions.
 

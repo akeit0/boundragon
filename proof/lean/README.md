@@ -161,9 +161,11 @@ the compiled remainder test; it does not identify that test with exact quarters.
 by a ratio in `[0,1)` and integer truncation turn a limb-underestimation bound
 below `E` into a center error below `E+1`. Its policy specialization maps limb
 budgets 1, 3, and 5 to center budgets 2, 4, and 6. It also proves that an exact
-high limb gives the exact radius floor after integer division. Actual stored
-cache-limb bounds and reconstructed radius identities remain uncertified in
-Lean; the theorem cannot infer those identities from a center-error bound.
+high limb gives the exact radius floor after integer division.
+[CacheGeneration.lean](Boundragon/CacheGeneration.lean) now derives the exact-high
+cache's accuracy from the general generation formula. Correspondence to the
+stored literals and compact reconstructed radius identities remain open; a
+center-error bound alone cannot establish those radius identities.
 
 ## Fallback rounding policy
 
@@ -198,6 +200,44 @@ the two fallback quarter outputs and positive/negative even-tie examples.
 
 ## Supporting results
 
+### Cache generation and integer ranges
+
+[CacheGeneration.lean](Boundragon/CacheGeneration.lean) proves the generation
+formula generally, rather than verifying a list of cache entries. For any
+positive integer numerator and denominator, the difference of their binary
+logarithms gives an exponent estimate that needs at most one downward
+correction. Exact comparison supplies the correction and proves
+`2^E <= numerator/denominator < 2^(E+1)`.
+
+At every positive width, the integer rescaling/division then returns the
+floor of the normalized rational significand. The proof derives both the
+less-than-one error and the range `[2^(width-1),2^width)`. Separate lemmas
+identify the generator's numerator-shift and denominator-shift branches.
+Specializing to `10^p` works for every signed decimal exponent, without a
+finite enumeration. The 128-bit cache divided by `2^64` equals the separately
+generated 64-bit floor. Center-error and radius-floor theorems consume this
+generated value and derive its accuracy, rather than assuming it.
+
+[IntegerRanges.lean](Boundragon/IntegerRanges.lean) proves the hidden-bit,
+multiplier, widening-product, centered-addition, signed residual, and output
+coefficient ranges. The maximum normal multiplier leaves 2048 units below
+`2^64`; the largest centered offset is 1027, so addition cannot wrap.
+
+[ExponentRanges.lean](Boundragon/ExponentRanges.lean) proves analytically that
+the exact scaling shift `q+E+12` lies in `[8,11]` whenever `k` is the exact
+decimal order of `2^q`. Two endpoint comparisons and monotonicity bound all
+normal cache indices. There is no per-exponent proof enumeration. The module
+also derives product, centering, and radius ranges from generated-cache
+bounds and checks the signed domains of the exponent-helper multiplications.
+It does **not** yet prove that the fixed-point `dec_exp` and `exp_shift`
+implementations return those exact mathematical exponents and shifts.
+
+`python tools/generate_decimal_tables.py --check` compares the checked-in
+header with the generator's entire output; CI runs it before the Lean build.
+This is an artifact consistency check, outside Lean. The kernel theorem is
+about the general arithmetic generation model, not Python execution or the
+header parser. Compact-anchor selection/reconstruction is also still separate.
+
 The proof separates general arithmetic from the binary64 specialization:
 
 | Module | Responsibility |
@@ -215,6 +255,9 @@ The proof separates general arithmetic from the binary64 specialization:
 | [Certificates.lean](Boundragon/Certificates.lean) | Ordered floor-sum certificate soundness principle |
 | [Remainders.lean](Boundragon/Remainders.lean) | Nested truncations, two-limb products, and remainder indicators |
 | [CacheScaling.lean](Boundragon/CacheScaling.lean) | Limb accuracy implies center-error bounds; exact high-limb radius floors |
+| [CacheGeneration.lean](Boundragon/CacheGeneration.lean) | General exact generation formula, cache widths/floors/error, and high-limb identity |
+| [IntegerRanges.lean](Boundragon/IntegerRanges.lean) | Normal shifts/products/centering and signed/output ranges |
+| [ExponentRanges.lean](Boundragon/ExponentRanges.lean) | Analytic exact shift/index bounds and generated-cache arithmetic ranges |
 | [Rounding.lean](Boundragon/Rounding.lean) | Exact nearest-integer ties-to-even policy |
 | [FallbackRounding.lean](Boundragon/FallbackRounding.lean) | Actual +6/quarter arithmetic and conditional policy implication |
 | [Examples.lean](Boundragon/Examples.lean) | Nonvacuous contracts and accepted outputs; tie examples |
@@ -245,9 +288,11 @@ Lean reference converter explicitly normalizes both branches.
 
 ## Remaining proof obligations
 
-The cache/error/radius hypotheses above are parameters of the theorem, not
-additional axioms. The existing exact certificates check them for the caches,
-but those certificate checkers have not yet been proved sound in Lean.
+The cache/error/radius hypotheses above are parameters of the accepted-output
+theorem, not additional axioms. The general exact-high cache generation,
+floor/error/width properties, and resulting center-error and radius-floor
+bounds are now proved. Reconstruction certificates and the complete connection
+from actual C++ dispatch/data/helpers to that contract remain open.
 
 A full converter theorem still needs:
 
@@ -262,15 +307,18 @@ A full converter theorem still needs:
    input. The ordered-sum and nearest/even policy implications, nested
    truncation identities, and remainder indicator are proved, but neither
    the evaluator nor the certificate data are yet connected to them.
-3. Actual cache generation/reconstruction bounds and exponent/shift helpers.
-   The general conversion from limb bounds to center-error bounds and the
-   exact-high-limb radius-floor identity are proved; actual table bounds and
-   reconstructed radius identities remain open.
+3. Compact cache reconstruction and radius identities, and correctness of the
+   fixed-point exponent/shift helpers. General exact generation, both cache
+   widths, their high-limb relationship, error bounds, and analytic exact
+   shift/index ranges are proved. Correspondence of the generator model to
+   Python/header literals is still outside the kernel proof.
 4. Correspondence of C++ normalization and shortcuts with the verified
    reference normalizer, special values, sign handling, and the separate
    binary32 kernels.
 5. A correspondence proof for the C++ fixed-width operations, masks, signed
-   shifts, overflow bounds, dispatch, and optional assembly.
+   shifts, dispatch, and optional assembly. Normal product and centered-addition
+   bounds are proved for generated cache values and shifts up to 11; deliberate
+   unsigned wrapping and the complete compiled operation sequence remain open.
 
 The current results are kernel-checked proofs of filter safety, normalization,
 both accepted branches' decimal optimality under explicit contracts,

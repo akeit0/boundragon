@@ -8,6 +8,9 @@ public import Boundragon.Certificates
 public import Boundragon.CoarseOptimal
 public import Boundragon.Accepted
 public import Boundragon.CacheScaling
+public import Boundragon.CacheGeneration
+public import Boundragon.IntegerRanges
+public import Boundragon.ExponentRanges
 public import Boundragon.Rounding
 public import Boundragon.FallbackRounding
 public import Boundragon.Examples

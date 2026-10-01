@@ -7,6 +7,9 @@ import Boundragon.Certificates
 import Boundragon.CoarseOptimal
 import Boundragon.Accepted
 import Boundragon.CacheScaling
+import Boundragon.CacheGeneration
+import Boundragon.IntegerRanges
+import Boundragon.ExponentRanges
 import Boundragon.Rounding
 import Boundragon.FallbackRounding
 import Boundragon.Examples
@@ -29,7 +32,9 @@ run_cmd do
     `Boundragon.affine_floor_sum_eq, `Boundragon.cached_center_error,
     `Boundragon.remainder_indicator, `Boundragon.fallback_fine_nearest_even,
     `Boundragon.example_power_optimal, `Boundragon.example_coarse_optimal,
-    `Boundragon.example_fine_optimal]
+    `Boundragon.example_fine_optimal, `Boundragon.decimal_cache_correct,
+    `Boundragon.generated_decimal_center_error, `Boundragon.normal_shift_range,
+    `Boundragon.generated_decimal_product_ranges]
   for name in required do
     unless env.contains name do
       throwError "Missing required proof {name}"

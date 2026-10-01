@@ -6,6 +6,8 @@ on:
     paths:
       - proof/lean/**
       - tools/check_lean_audit.py
+      - tools/generate_decimal_tables.py
+      - include/boundragon/detail/decimal_tables.h
       - include/boundragon/detail/centered_filter.h
       - include/boundragon/detail/compact_cache.h
       - .github/workflows/lean-proof.yml
@@ -13,6 +15,8 @@ on:
     paths:
       - proof/lean/**
       - tools/check_lean_audit.py
+      - tools/generate_decimal_tables.py
+      - include/boundragon/detail/decimal_tables.h
       - include/boundragon/detail/centered_filter.h
       - include/boundragon/detail/compact_cache.h
       - .github/workflows/lean-proof.yml
@@ -28,6 +32,8 @@ jobs:
       LEAN_NUM_THREADS: 2
     steps:
       - uses: actions/checkout@v6
+      - name: Check generated decimal header
+        run: python3 tools/generate_decimal_tables.py --check
       - uses: leanprover/lean-action@v1
         with:
           lake-package-directory: proof/lean

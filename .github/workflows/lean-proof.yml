@@ -1,4 +1,4 @@
-name: Check Lean filter proof
+name: Check Lean proofs
 
 on:
   push:

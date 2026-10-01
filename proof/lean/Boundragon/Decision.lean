@@ -40,7 +40,7 @@ structure CenteredContract2048 (u h c m : ℤ) (Y R : ℚ) : Prop where
 fine grid, and have no valid competitor anywhere on the coarse grid.
 Shortestness after decimal normalization is a separate two-grid theorem.
 -/
-def ChoiceCorrect2048 (Y R : ℚ) : CenteredChoice → Prop
+@[expose] def ChoiceCorrect2048 (Y R : ℚ) : CenteredChoice → Prop
   | .coarse j => |Y - 2048 * j| < R
   | .fine d =>
       |Y - 2048 * (d : ℚ) / 10| < R ∧

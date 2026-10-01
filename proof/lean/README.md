@@ -1,10 +1,11 @@
-# Lean proof of the centered binary64 filter
+# Lean proofs of the centered binary64 filter and fine-result optimality
 
 This project formalizes the centered decision guards from
 [the binary64 correctness argument](../../docs/proof.md#5-centered-filters-for-even-error-bounds).
 It is a partial formalization of Boundragon, with an exact-integer decision
-model and exact rational geometry. It does not yet prove the complete public
-converter correct.
+model, exact rational geometry, decimal digit counts, and a floor-sum
+certificate principle. It does not yet prove the complete public converter
+correct.
 
 ## Reproduce
 
@@ -12,7 +13,7 @@ Install Lean's `elan` toolchain manager, then run from the repository root:
 
 ```sh
 cd proof/lean
-lake exe cache get Mathlib.Data.Rat.Floor Mathlib.RingTheory.Coprime.Lemmas Mathlib.Tactic.Linarith Mathlib.Tactic.NormNum Mathlib.Tactic.Ring Mathlib.Tactic.Positivity
+lake exe cache get Mathlib.Data.Rat.Floor Mathlib.Data.Nat.Log Mathlib.Algebra.Order.BigOperators.Group.Finset Mathlib.RingTheory.Coprime.Lemmas Mathlib.Tactic.Linarith Mathlib.Tactic.NormNum Mathlib.Tactic.Ring Mathlib.Tactic.Positivity
 lake build
 lake env leanchecker Boundragon
 ```
@@ -59,6 +60,49 @@ closer than every other fine-grid coefficient. Exact decimal-half ties are
 therefore excluded. A rejected guard returns `none`, representing fallback;
 the theorem makes no assertion about a fallback result.
 
+## Fine-result shortestness and closest selection
+
+[Shortest.lean](Boundragon/Shortest.lean) strengthens fine acceptance to
+`centered_fine_optimal_scaled`. Under the same contract, with `m >= 11`, a
+result `some (.fine n)` produces a decimal `n * 10^k` that is:
+
+- Strictly inside the rounding interval.
+- Canonical: its coefficient has no trailing decimal zero.
+- Shortest among **all** valid positive decimal representations, allowing
+  every integer exponent.
+- Uniquely closest among the equally short valid decimal values.
+
+Here `k` is any integer decimal scale. The center and radius are respectively
+`(10*Y/2048)*10^k` and `(10*R/2048)*10^k`. `DecimalRep` stores a coefficient,
+exponent, and `digitIndex`; `digitIndex + 1` is the significant-digit count.
+The theorem constructs a digit index satisfying the exact power-of-ten bounds.
+
+The proof shows that an interval with no coarse-grid point cannot cross a
+decimal-decade boundary. All valid decimals then have the same decimal order;
+a shorter coefficient would require an exponent on the excluded coarse grid.
+For equal digit counts, nearest-integer uniqueness gives closest selection.
+`decimal_optimal_shift` preserves this result under multiplication by any
+decimal power, including negative powers.
+
+Competitors may lie on either closed endpoint and need not be canonical.
+This larger comparison set covers either parity's parsing interval. The
+selected output is strictly interior, so endpoint parity does not affect this
+branch. The `m >= 11` hypothesis explicitly excludes small significands; it
+is not yet derived from the C++ dispatch.
+
+## Floor-sum certificate principle
+
+[Certificates.lean](Boundragon/Certificates.lean) proves
+`ordered_sum_eq_pointwise`: equal finite sums of pointwise ordered integer
+sequences force equality at every index. `affine_floor_sum_eq` specializes
+this to floors of affine rational functions, proving their ordering from
+endpoint inequalities on each supplied interval. This formalizes the
+[certificate principle](../../docs/proof.md#why-exact-floor-sums-prove-pointwise-equality).
+
+The exact mathematical sum equality is still a hypothesis. The Euclidean
+floor-sum evaluator, the verifier's interval splitting, and the concrete
+certificate instances have not yet been verified in Lean.
+
 ## Supporting results
 
 The proof separates general arithmetic from the binary64 specialization:
@@ -70,6 +114,9 @@ The proof separates general arithmetic from the binary64 specialization:
 | [Fine.lean](Boundragon/Fine.lean) | Rounding stability for an arbitrary positive integer modulus |
 | [Binary64.lean](Boundragon/Binary64.lean) | Named decoder/coefficient definitions and the 2048/1024 arithmetic |
 | [Decision.lean](Boundragon/Decision.lean) | Filter branches, input contract, and combined soundness theorem |
+| [Decimal.lean](Boundragon/Decimal.lean) | Decimal representations, significant digits, orders, and scaling |
+| [Shortest.lean](Boundragon/Shortest.lean) | Fine-branch canonical shortestness and unique closest selection |
+| [Certificates.lean](Boundragon/Certificates.lean) | Ordered floor-sum certificate soundness principle |
 | [Audit.lean](Boundragon/Audit.lean) | Build-time transitive axiom audit |
 
 [Centered.lean](Boundragon/Centered.lean) remains a compatibility import.
@@ -102,16 +149,21 @@ but those certificate checkers have not yet been proved sound in Lean.
 
 A full converter theorem still needs:
 
-1. The two-grid shortestness argument, including decimal-decade crossings,
-   canonical digit counts, and the small-subnormal exceptions.
-2. The complete fallback, its floor-sum/congruence certificates, exceptional
-   powers of two, and ties-to-even handling.
+1. Coarse-result shortestness after trailing-zero normalization, including
+   power-of-ten boundaries, and the small-subnormal exceptions. Fine-result
+   shortestness, digit counts, decade containment, and scaling are proved
+   under the stated contract and `m >= 11`.
+2. The complete fallback, the Euclidean floor-sum evaluator and concrete
+   floor-sum/congruence certificates, exceptional powers of two, and
+   ties-to-even handling. The ordered-sum implication is proved, but neither
+   the evaluator nor the certificate data are yet connected to it.
 3. Actual cache generation/reconstruction bounds and exponent/shift helpers.
 4. Canonical normalization and shortcuts, special values, sign handling, and
    the separate binary32 kernels.
 5. A correspondence proof for the C++ fixed-width operations, masks, signed
    shifts, overflow bounds, dispatch, and optional assembly.
 
-The current result is a kernel-checked proof of filter safety under explicit
-contracts. It is not an end-to-end proof of C++, compiler translation, or
-machine code, and it does not replace the existing certificates and tests.
+The current results are kernel-checked proofs of filter safety, fine-result
+decimal optimality under explicit contracts, and a certificate soundness
+principle. They are not an end-to-end proof of C++, compiler translation, or
+machine code, and they do not replace the existing certificates and tests.

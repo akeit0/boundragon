@@ -21,9 +21,12 @@ compiled-cache certificate are described in
 
 The [Lean project](../proof/lean/README.md) formally proves the centered
 binary64 filter's acceptance/rejection and fine-rounding safety under explicit
-cache and interval contracts. Its combined branch theorem is kernel-checked;
-the complete fallback, shortestness, actual cache contracts, and C++ source
-correspondence remain outside this partial formalization.
+cache and interval contracts. For accepted fine results with significand
+`m >= 11`, it also proves canonical shortestness and unique closest selection
+at any decimal scale. The ordered floor-sum certificate principle is proved
+separately. Coarse-result shortestness, the complete fallback, concrete cache
+contracts/certificates, and C++ source correspondence remain outside this
+partial formalization.
 
 The current sources are `decimal_core.h`, `decimal_tables.h`,
 `centered_filter.h`, `canonical_decimal.h`, `compact_cache.h` and `compact_cache_tables.h`.

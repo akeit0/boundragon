@@ -157,10 +157,11 @@ exhaustive binary32 checks.
 
 A [Lean proof project](proof/lean/README.md) formally verifies the centered
 binary64 filter's decision safety under explicit cache/interval contracts.
-Accepted fine results additionally have canonical shortestness and unique
-closest selection proved for significands `m >= 11`, at any decimal scale.
+Both accepted branches additionally have canonical shortestness and unique
+closest selection proved after reference normalization for significands
+`m >= 11`, at any decimal scale, including power-of-ten boundaries.
 The ordered floor-sum certificate principle is also proved. This remains a
-partial formalization: coarse-result shortestness, fallback correctness,
+partial formalization: small-subnormal exceptions, fallback correctness,
 concrete cache contracts, and C++ source correspondence are unfinished.
 
 ## Interactive documentation

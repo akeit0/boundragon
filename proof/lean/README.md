@@ -1,11 +1,12 @@
-# Lean proofs of the centered binary64 filter and fine-result optimality
+# Lean proofs of normalized centered binary64 conversion
 
 This project formalizes the centered decision guards from
 [the binary64 correctness argument](../../docs/proof.md#5-centered-filters-for-even-error-bounds).
 It is a partial formalization of Boundragon, with an exact-integer decision
-model, exact rational geometry, decimal digit counts, and a floor-sum
-certificate principle. It does not yet prove the complete public converter
-correct.
+model, a terminating reference normalizer, exact rational geometry, decimal
+digit counts, and a floor-sum certificate principle. Every accepted normalized
+branch is proved optimal under the contracts below and `m >= 11`. The complete
+public converter is not yet proved correct.
 
 ## Reproduce
 
@@ -60,6 +61,14 @@ closer than every other fine-grid coefficient. Exact decimal-half ties are
 therefore excluded. A rejected guard returns `none`, representing fallback;
 the theorem makes no assertion about a fallback result.
 
+[Accepted.lean](Boundragon/Accepted.lean) defines `normalizedDecision2048`,
+which applies `normalizeDecimal` to either accepted coefficient at its actual
+decimal scale. Its main theorem, `centered_normalized_decision_sound`, proves
+that every `some d` result is canonical, strictly valid, shortest, and uniquely
+closest among equally short valid decimal values. It uses the same contract,
+adds `m >= 11`, and holds for every integer decimal scale `k`. Rejected guards
+still return `none`; the definition does not implement fallback.
+
 ## Fine-result shortestness and closest selection
 
 [Shortest.lean](Boundragon/Shortest.lean) strengthens fine acceptance to
@@ -90,6 +99,36 @@ selected output is strictly interior, so endpoint parity does not affect this
 branch. The `m >= 11` hypothesis explicitly excludes small significands; it
 is not yet derived from the C++ dispatch.
 
+## Coarse-result normalization and optimality
+
+[Normalization.lean](Boundragon/Normalization.lean) defines a terminating
+reference algorithm that divides positive coefficients by ten until no
+trailing zero remains. `normalize_decimal_correct` proves value preservation,
+canonicality, exact digit bounds, and a nondecreasing exponent.
+`canonical_exponent_max` and `canonical_digits_min` prove that a canonical
+representation has the largest exponent and fewest digits for its value;
+`canonical_decimal_unique` proves that representation unique.
+
+[CoarseOptimal.lean](Boundragon/CoarseOptimal.lean) proves
+`centered_coarse_optimal_scaled`. For `some (.coarse j)` and `m >= 11`,
+`normalizeDecimal j.toNat (k+1)` satisfies the same optimality specification
+as the accepted fine result, at any integer scale `k`.
+
+When the accepted value is not a power of ten, coarse-grid uniqueness excludes
+every decade boundary from the interval. All equally short or shorter
+competitors therefore lie on the coarse grid and must be the same value.
+Canonicalization gives the minimum digit count.
+
+For a power of ten `T`, one digit is already minimal, but the proof also
+compares against one-digit decimals across the boundary. All other such
+decimals lie at or below `0.9*T` or at or above `2*T`. The interval geometry
+and `m >= 11` imply `20*abs(x-T) < T`, making `T` uniquely closest.
+
+These results complete the mathematical two-grid argument for accepted
+branches under the regular contract and significand restriction. The reference
+normalizer is verified; its correspondence with the C++ normalization routines
+and shortcuts remains to be proved.
+
 ## Floor-sum certificate principle
 
 [Certificates.lean](Boundragon/Certificates.lean) proves
@@ -116,6 +155,9 @@ The proof separates general arithmetic from the binary64 specialization:
 | [Decision.lean](Boundragon/Decision.lean) | Filter branches, input contract, and combined soundness theorem |
 | [Decimal.lean](Boundragon/Decimal.lean) | Decimal representations, significant digits, orders, and scaling |
 | [Shortest.lean](Boundragon/Shortest.lean) | Fine-branch canonical shortestness and unique closest selection |
+| [Normalization.lean](Boundragon/Normalization.lean) | Terminating reference normalization, value preservation, and canonical uniqueness |
+| [CoarseOptimal.lean](Boundragon/CoarseOptimal.lean) | Coarse optimality and power-of-ten boundary handling |
+| [Accepted.lean](Boundragon/Accepted.lean) | Executable normalized branch model and combined decimal optimality theorem |
 | [Certificates.lean](Boundragon/Certificates.lean) | Ordered floor-sum certificate soundness principle |
 | [Audit.lean](Boundragon/Audit.lean) | Build-time transitive axiom audit |
 
@@ -139,7 +181,8 @@ The branch model follows the mathematical decisions of
 [`centered_filter.h`](../../include/boundragon/detail/centered_filter.h) and
 [`tiny_nearest_finish`](../../include/boundragon/detail/compact_cache.h).
 Its coarse/fine tags make the selected grid explicit; the C++ converter packs
-either choice into decimal components and may normalize trailing zeroes.
+either choice into decimal components and may normalize trailing zeroes. The
+Lean reference converter explicitly normalizes both branches.
 
 ## Remaining proof obligations
 
@@ -149,21 +192,24 @@ but those certificate checkers have not yet been proved sound in Lean.
 
 A full converter theorem still needs:
 
-1. Coarse-result shortestness after trailing-zero normalization, including
-   power-of-ten boundaries, and the small-subnormal exceptions. Fine-result
-   shortestness, digit counts, decade containment, and scaling are proved
-   under the stated contract and `m >= 11`.
+1. The small-subnormal exceptions and derivation of the regular contract and
+   `m >= 11` from actual dispatch. Both accepted branches' canonical
+   shortestness and unique closest selection, including power-of-ten
+   boundaries and arbitrary decimal scaling, are proved under these
+   assumptions.
 2. The complete fallback, the Euclidean floor-sum evaluator and concrete
    floor-sum/congruence certificates, exceptional powers of two, and
    ties-to-even handling. The ordered-sum implication is proved, but neither
    the evaluator nor the certificate data are yet connected to it.
 3. Actual cache generation/reconstruction bounds and exponent/shift helpers.
-4. Canonical normalization and shortcuts, special values, sign handling, and
-   the separate binary32 kernels.
+4. Correspondence of C++ normalization and shortcuts with the verified
+   reference normalizer, special values, sign handling, and the separate
+   binary32 kernels.
 5. A correspondence proof for the C++ fixed-width operations, masks, signed
    shifts, overflow bounds, dispatch, and optional assembly.
 
-The current results are kernel-checked proofs of filter safety, fine-result
-decimal optimality under explicit contracts, and a certificate soundness
-principle. They are not an end-to-end proof of C++, compiler translation, or
-machine code, and they do not replace the existing certificates and tests.
+The current results are kernel-checked proofs of filter safety, normalization,
+both accepted branches' decimal optimality under explicit contracts, and a
+certificate soundness principle. They are not an end-to-end proof of C++,
+compiler translation, or machine code, and they do not replace the existing
+certificates and tests.

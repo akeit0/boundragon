@@ -57,12 +57,13 @@ lake env leanchecker Boundragon
 
 The first build may fetch dependencies; the project README describes how to
 download their precompiled cache. The build checks the centered binary64 guard
-proofs, fine-result canonical shortestness and unique closest selection under
-the documented contracts, and the ordered floor-sum certificate principle.
+proofs, reference normalization, both accepted branches' canonical shortestness
+and unique closest selection under the documented contracts, and the ordered
+floor-sum certificate principle.
 It also audits transitive axioms. The checker rechecks the compiled proof
 environment. This is separate from CTest; complete-converter correctness,
-including coarse-result shortestness, fallback, and C++ source correspondence,
-remains unfinished.
+including small-subnormal exceptions, fallback, concrete cache contracts, and
+C++ source correspondence, remains unfinished.
 
 ## Read-only table checks
 

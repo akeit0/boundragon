@@ -4,6 +4,8 @@ import Boundragon.Decision
 import Boundragon.Decimal
 import Boundragon.Shortest
 import Boundragon.Certificates
+import Boundragon.CoarseOptimal
+import Boundragon.Accepted
 meta import Lean.Util.CollectAxioms
 meta import Lean.Elab.Command
 
@@ -21,6 +23,8 @@ run_cmd do
     throwError "Missing the centered filter soundness theorem"
   unless env.contains `Boundragon.centered_fine_optimal_scaled do
     throwError "Missing the fine-branch decimal optimality theorem"
+  unless env.contains `Boundragon.centered_normalized_decision_sound do
+    throwError "Missing the normalized centered converter optimality theorem"
   unless env.contains `Boundragon.affine_floor_sum_eq do
     throwError "Missing the floor-sum certificate soundness theorem"
   for (name, _) in env.constants do

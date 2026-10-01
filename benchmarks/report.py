@@ -21,7 +21,7 @@ LABELS = {"random-finite-bits": "Random finite bits", "random-bits": "Random fin
 DISPLAY = {"boundragon": "Boundragon default", "boundragon-compact": "Boundragon Compact",
            "boundragon-integers": "Boundragon Integers", "boundragon-minimal": "Boundragon Minimal",
            "dragonbox": "Dragonbox full", "dragonbox-compact": "Dragonbox compact",
-           "zmij": "zmij serial", "zmij-grouped": "zmij grouped"}
+           "zmij": "zmij + serial normalization", "zmij-grouped": "zmij + grouped normalization"}
 
 
 def table(headers, rows):
@@ -116,6 +116,9 @@ def write_report(directory):
             if row["combined_delta"] != row["text_delta"] + row["rodata_delta"]:
                 raise ValueError("Incorrect combined footprint")
     text = ["# Pure canonical numeric conversion benchmark results", "", "Median thread CPU ns/value; lower is better. Every entry produces a canonical coefficient without trailing decimal zeroes, exponent and sign. Normalization is timed; parsing and ASCII formatting are excluded.", ""]
+    text += ["## Scope of the zmij adapter results", "",
+             "Boundragon and Dragonbox provide canonical coefficients directly. The zmij entries measure the public `to_decimal` API plus benchmark-supplied numeric zero removal. Serial/grouped describe our normalization adapters, not native zmij algorithm variants.", "",
+             "Native zmij's integrated writer trims zeroes during digit conversion and does not use these adapters. On short decimals the adapted canonical operation can take longer than integrated writing. These results do not isolate the rounding kernel or establish a speed advantage over native zmij stringification. The suites use different loops and corpus settings; subtracting their timings does not isolate adapter cost.", ""]
     for fmt in METHODS:
         text += ["## " + fmt, "", timing_table(summary, fmt), "", "Boundragon default paired time ratios (below 1 is faster), with bootstrap 95% intervals:", ""]
         rows = []
@@ -125,7 +128,7 @@ def write_report(directory):
                 r = record["boundragon_paired_time_ratios"][ref]
                 cells.append(f"{r['median']:.3f} [{r['bootstrap_95'][0]:.3f}, {r['bootstrap_95'][1]:.3f}]")
             rows.append([corpus_label(fmt, corpus), *cells])
-        text += [table(["Corpus", "vs Dragonbox full", "vs zmij serial", "vs zmij grouped"], rows), ""]
+        text += [table(["Corpus", "vs Dragonbox full", "vs zmij + serial normalization", "vs zmij + grouped normalization"], rows), ""]
     text += ["## Linked footprint", "", "Control-subtracted .text + .rodata bytes after LTO and section GC; alignment remains included.", "", size_table(footprint), "",
              "Raw trials, flags, reference pins, source hashes and recorded artifact hashes accompany this report.", "Bootstrap intervals describe these trial blocks on this machine; they do not estimate cross-machine variation.", ""]
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")

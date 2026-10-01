@@ -80,16 +80,13 @@ Every implementation returns the same contract: coefficient without trailing
 decimal zeroes, exponent, and sign. Conversion and normalization are timed;
 parsing and text formatting are excluded.
 
-**binary32 — Fast prioritizes conversion speed.** It uses less time than the
-compared Dragonbox and zmij adapters on all eight recorded corpora. Its linked
-footprint is larger than Dragonbox full's, but smaller than either zmij adapter's.
+**binary32 — Fast prioritizes conversion speed.** It uses less time than
+Dragonbox full on all eight recorded corpora, with a larger linked footprint.
 
 | Implementation | Random finite bits | 1–6 decimal digits | Mixed 1–9 digits | Simple values | Linked bytes |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Boundragon Fast | **5.814** | **3.970** | **4.511** | **3.812** | 4,749 |
 | Dragonbox full | 8.648 | 5.265 | 6.589 | 5.526 | **1,510** |
-| zmij serial | 8.415 | 16.210 | 15.630 | 12.801 | 23,226 |
-| zmij grouped | 7.368 | 6.019 | 6.857 | 6.378 | 23,315 |
 
 **binary64 — Balanced combines competitive speed with a moderate footprint.**
 On random finite bits it takes 19.3% less CPU time than Dragonbox full in the
@@ -102,11 +99,15 @@ mixed decimals and simple values; Dragonbox compact uses much less space.
 | Boundragon Balanced | **6.813** | 7.182 | 7.049 | 8.058 | 7,793 |
 | Dragonbox full | 8.408 | **6.400** | **6.740** | **6.487** | 11,135 |
 | Dragonbox compact | 11.451 | 9.606 | 9.943 | 9.241 | **1,990** |
-| zmij serial | 9.307 | 27.574 | 23.242 | 18.972 | 23,267 |
-| zmij grouped | 10.686 | 17.383 | 22.724 | 10.637 | 23,356 |
 
 [Full canonical results](benchmarks/results/2026-10-01/canonical/REPORT.md)
 include all corpora, smaller Boundragon policies, and paired confidence intervals.
+The primary tables above compare implementations that provide canonical output
+directly. The full report also retains **zmij + normalization adapter** results:
+zmij's public coefficient can contain trailing zeroes, so our adapter removes
+them numerically. The adapted canonical operation can take longer than native
+zmij's integrated writer, which trims zeroes while producing text. Those timings
+do not establish a speed advantage over native zmij; its writer is compared below.
 
 ### Stringification: integrated binary64 writers
 

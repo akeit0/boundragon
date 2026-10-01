@@ -4,9 +4,27 @@ Median thread CPU ns/value; lower is better. Every entry produces a canonical co
 
 Recorded 2026-10-01 on an Intel Core i7-13700F, WSL2 Linux x86-64, GCC 11.4.0; `-O3 -march=native -flto`. Two seeds and eleven shuffled trials per seed. Default means binary32 Fast or binary64 Balanced.
 
+## Scope of the zmij adapter results
+
+Boundragon and Dragonbox provide canonical coefficients directly. The zmij
+entries measure its public `to_decimal` **plus benchmark-supplied numeric
+normalization**, because its coefficient can retain trailing zeroes. Serial
+normalization divides once per zero; grouped normalization removes blocks.
+These labels describe our adapters, not native zmij algorithm variants.
+
+Native zmij's writer trims zeroes during digit conversion and does not use
+these adapters. On short decimals the adapter work can make canonical timings
+larger than integrated-writer timings. These measurements apply to the adapted
+canonical contract; they do not isolate zmij's rounding kernel or establish a
+speed advantage over its native writer. The suites also use different loops
+and corpus settings, so subtracting their timings does not isolate adapter cost.
+See [native integrated-writer results](../integrated-writers/REPORT.md) and
+[adapter details](../../../../docs/benchmarks.md#interpreting-the-zmij-normalization-adapters).
+All recorded numerical results below are unchanged.
+
 ## binary32
 
-| Corpus | Boundragon default | Boundragon Compact | Boundragon Integers | Dragonbox full | zmij serial | zmij grouped |
+| Corpus | Boundragon default | Boundragon Compact | Boundragon Integers | Dragonbox full | zmij + serial normalization | zmij + grouped normalization |
 | --- | --- | --- | --- | --- | --- | --- |
 | Random finite bits | 5.814 | 8.398 | 6.137 | 8.648 | 8.415 | 7.368 |
 | Unit interval [0,1) | 6.113 | 8.542 | 6.090 | 9.269 | 9.311 | 8.341 |
@@ -19,7 +37,7 @@ Recorded 2026-10-01 on an Intel Core i7-13700F, WSL2 Linux x86-64, GCC 11.4.0; `
 
 Boundragon default paired time ratios (below 1 is faster), with bootstrap 95% intervals:
 
-| Corpus | vs Dragonbox full | vs zmij serial | vs zmij grouped |
+| Corpus | vs Dragonbox full | vs zmij + serial normalization | vs zmij + grouped normalization |
 | --- | --- | --- | --- |
 | Random finite bits | 0.673 [0.669, 0.676] | 0.690 [0.688, 0.695] | 0.786 [0.779, 0.794] |
 | Unit interval [0,1) | 0.659 [0.657, 0.663] | 0.656 [0.653, 0.660] | 0.735 [0.729, 0.738] |
@@ -32,7 +50,7 @@ Boundragon default paired time ratios (below 1 is faster), with bootstrap 95% in
 
 ## binary64
 
-| Corpus | Boundragon default | Boundragon Minimal | Dragonbox full | Dragonbox compact | zmij serial | zmij grouped |
+| Corpus | Boundragon default | Boundragon Minimal | Dragonbox full | Dragonbox compact | zmij + serial normalization | zmij + grouped normalization |
 | --- | --- | --- | --- | --- | --- | --- |
 | Random finite bits | 6.813 | 10.476 | 8.408 | 11.451 | 9.307 | 10.686 |
 | One to two [1,2) | 5.178 | 7.984 | 6.364 | 8.919 | 7.168 | 8.697 |
@@ -61,7 +79,7 @@ Boundragon default paired time ratios (below 1 is faster), with bootstrap 95% in
 
 Boundragon default paired time ratios (below 1 is faster), with bootstrap 95% intervals:
 
-| Corpus | vs Dragonbox full | vs zmij serial | vs zmij grouped |
+| Corpus | vs Dragonbox full | vs zmij + serial normalization | vs zmij + grouped normalization |
 | --- | --- | --- | --- |
 | Random finite bits | 0.807 [0.803, 0.815] | 0.734 [0.727, 0.746] | 0.639 [0.630, 0.643] |
 | One to two [1,2) | 0.811 [0.808, 0.816] | 0.723 [0.717, 0.728] | 0.594 [0.591, 0.597] |
@@ -98,14 +116,14 @@ Control-subtracted .text + .rodata bytes after LTO and section GC; alignment rem
 | binary32 | Boundragon Compact | 919 | 616 | 1,535 |
 | binary32 | Boundragon Integers | 1,068 | 3,688 | 4,756 |
 | binary32 | Dragonbox full | 886 | 624 | 1,510 |
-| binary32 | zmij serial | 698 | 22,528 | 23,226 |
-| binary32 | zmij grouped | 787 | 22,528 | 23,315 |
+| binary32 | zmij + serial normalization | 698 | 22,528 | 23,226 |
+| binary32 | zmij + grouped normalization | 787 | 22,528 | 23,315 |
 | binary64 | Boundragon default | 2,209 | 5,584 | 7,793 |
 | binary64 | Boundragon Minimal | 1,216 | 608 | 1,824 |
 | binary64 | Dragonbox full | 1,231 | 9,904 | 11,135 |
 | binary64 | Dragonbox compact | 1,398 | 592 | 1,990 |
-| binary64 | zmij serial | 739 | 22,528 | 23,267 |
-| binary64 | zmij grouped | 828 | 22,528 | 23,356 |
+| binary64 | zmij + serial normalization | 739 | 22,528 | 23,267 |
+| binary64 | zmij + grouped normalization | 828 | 22,528 | 23,356 |
 
 This repository retains this measured summary. Raw trials and development logs are not bundled. See [methodology and fresh-run commands](../../../../docs/benchmarks.md).
 Bootstrap intervals describe these trial blocks on this machine; they do not estimate cross-machine variation.

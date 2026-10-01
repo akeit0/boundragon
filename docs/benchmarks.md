@@ -43,6 +43,28 @@ development history. Fresh runs record current source hashes and raw data.
 - xjb is writer-only in this study. No formatting-and-parsing adapter appears
   in the canonical comparison.
 
+### Interpreting the zmij normalization adapters
+
+The pinned zmij public `to_decimal` result can retain trailing coefficient
+zeroes. The harness adds numeric zero removal: the serial adapter divides once
+per zero; the binary64 grouped adapter tests blocks of 8, 4, 2 and 1 zeroes,
+while binary32 uses bounded modular tests. Short decimals can therefore incur
+substantial adapter work. These are two adapters supplied by this benchmark,
+not two native zmij conversion algorithms.
+
+Native zmij's integrated writer consumes its internal significand and final
+digit directly. Its digit conversion trims zeroes while producing text,
+including SIMD paths; it does not call either numeric normalization adapter.
+Consequently, the adapted canonical operation can take more time than native
+stringification. The recorded suites use different loops and corpus settings,
+so their timings cannot be subtracted to isolate normalization cost.
+
+The README's primary canonical comparison uses Boundragon and Dragonbox, which
+provide canonical output directly. The full report retains the zmij adapter
+measurements under explicit labels. Compare native zmij using the integrated
+writer study; the adapter results do not measure its standalone rounding kernel
+or establish a native stringification speed advantage.
+
 The pinned references are:
 
 - [Dragonbox in dtoa-benchmark, `5c3e325`](https://github.com/fmtlib/dtoa-benchmark/tree/5c3e325f9b100d4207fbee105fbd704588dcd87e/src/dragonbox).

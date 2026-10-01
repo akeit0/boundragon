@@ -1,0 +1,1902 @@
+{
+  "recorded": "2026-10-01",
+  "environment": "Ubuntu Linux x86-64, GCC 11.4.0, glibc 2.35, FE_TONEAREST, C locale",
+  "formats": {
+    "binary32": {
+      "policy": "Fast",
+      "sourceSha256": {
+        "include/boundragon/detail/float_decimal.h": "322b398713b81aa99e315781538d3e4c6e67c0834438adb68788f095392facf6",
+        "include/boundragon/detail/binary32_fast_cache.h": "18fe737415ea15dbcaf4d5f4a5ff0ace72bbc3ed2e2f662efde1c6215c474d8f",
+        "benchmarks/branch_profile32.cpp": "cd2adc3194c5e7b839218208f3cf63eddfff0d0d79d1f1ed4c05d57bb9651f17"
+      },
+      "samples": {
+        "random-finite-bits": {
+          "n": 2097152,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 1048576
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 1048576
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              2097152,
+              0
+            ],
+            "check-power": [
+              2097152,
+              1
+            ],
+            "check-integer-range": [
+              2097151,
+              65953
+            ],
+            "check-integer-bits": [
+              65953,
+              16550
+            ],
+            "check-tiny": [
+              2080601,
+              0
+            ],
+            "check-coarse": [
+              2080601,
+              800374
+            ],
+            "check-boundary": [
+              1280227,
+              9255
+            ],
+            "check-fine-change": [
+              1270972,
+              123
+            ],
+            "check-fine-tie": [
+              1270849,
+              8269
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 1,
+            "integer": 16550,
+            "coarse": 800374,
+            "fine": 1262580,
+            "fallback": 17647
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 9255,
+            "check-fine-change": 123,
+            "check-fine-tie": 8269
+          }
+        },
+        "decimal-1-to-6": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              713
+            ],
+            "check-integer-range": [
+              261431,
+              15795
+            ],
+            "check-integer-bits": [
+              15795,
+              15430
+            ],
+            "check-tiny": [
+              246001,
+              0
+            ],
+            "check-coarse": [
+              246001,
+              243197
+            ],
+            "check-boundary": [
+              2804,
+              2804
+            ],
+            "check-fine-change": [
+              0,
+              0
+            ],
+            "check-fine-tie": [
+              0,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 713,
+            "integer": 15430,
+            "coarse": 243197,
+            "fine": 0,
+            "fallback": 2804
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 2804,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d1": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              2231
+            ],
+            "check-integer-range": [
+              259913,
+              8040
+            ],
+            "check-integer-bits": [
+              8040,
+              8040
+            ],
+            "check-tiny": [
+              251873,
+              0
+            ],
+            "check-coarse": [
+              251873,
+              250929
+            ],
+            "check-boundary": [
+              944,
+              944
+            ],
+            "check-fine-change": [
+              0,
+              0
+            ],
+            "check-fine-tie": [
+              0,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 2231,
+            "integer": 8040,
+            "coarse": 250929,
+            "fine": 0,
+            "fallback": 944
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 944,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d2": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              442
+            ],
+            "check-integer-range": [
+              261702,
+              8091
+            ],
+            "check-integer-bits": [
+              8091,
+              8091
+            ],
+            "check-tiny": [
+              253611,
+              0
+            ],
+            "check-coarse": [
+              253611,
+              251793
+            ],
+            "check-boundary": [
+              1818,
+              1818
+            ],
+            "check-fine-change": [
+              0,
+              0
+            ],
+            "check-fine-tie": [
+              0,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 442,
+            "integer": 8091,
+            "coarse": 251793,
+            "fine": 0,
+            "fallback": 1818
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1818,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d3": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              84
+            ],
+            "check-integer-range": [
+              262060,
+              8209
+            ],
+            "check-integer-bits": [
+              8209,
+              8209
+            ],
+            "check-tiny": [
+              253851,
+              0
+            ],
+            "check-coarse": [
+              253851,
+              252466
+            ],
+            "check-boundary": [
+              1385,
+              1385
+            ],
+            "check-fine-change": [
+              0,
+              0
+            ],
+            "check-fine-tie": [
+              0,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 84,
+            "integer": 8209,
+            "coarse": 252466,
+            "fine": 0,
+            "fallback": 1385
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1385,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d4": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              10
+            ],
+            "check-integer-range": [
+              262134,
+              8155
+            ],
+            "check-integer-bits": [
+              8155,
+              8155
+            ],
+            "check-tiny": [
+              253979,
+              0
+            ],
+            "check-coarse": [
+              253979,
+              252405
+            ],
+            "check-boundary": [
+              1574,
+              1574
+            ],
+            "check-fine-change": [
+              0,
+              0
+            ],
+            "check-fine-tie": [
+              0,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 10,
+            "integer": 8155,
+            "coarse": 252405,
+            "fine": 0,
+            "fallback": 1574
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1574,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d5": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              8346
+            ],
+            "check-integer-bits": [
+              8346,
+              8346
+            ],
+            "check-tiny": [
+              253798,
+              0
+            ],
+            "check-coarse": [
+              253798,
+              252304
+            ],
+            "check-boundary": [
+              1494,
+              1487
+            ],
+            "check-fine-change": [
+              7,
+              0
+            ],
+            "check-fine-tie": [
+              7,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 0,
+            "integer": 8346,
+            "coarse": 252304,
+            "fine": 7,
+            "fallback": 1487
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1487,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d6": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              8180
+            ],
+            "check-integer-bits": [
+              8180,
+              7683
+            ],
+            "check-tiny": [
+              254461,
+              0
+            ],
+            "check-coarse": [
+              254461,
+              252845
+            ],
+            "check-boundary": [
+              1616,
+              1523
+            ],
+            "check-fine-change": [
+              93,
+              0
+            ],
+            "check-fine-tie": [
+              93,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 0,
+            "integer": 7683,
+            "coarse": 252845,
+            "fine": 93,
+            "fallback": 1523
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1523,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d7": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              8291
+            ],
+            "check-integer-bits": [
+              8291,
+              4529
+            ],
+            "check-tiny": [
+              257615,
+              0
+            ],
+            "check-coarse": [
+              257615,
+              253824
+            ],
+            "check-boundary": [
+              3791,
+              1547
+            ],
+            "check-fine-change": [
+              2244,
+              0
+            ],
+            "check-fine-tie": [
+              2244,
+              0
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 0,
+            "integer": 4529,
+            "coarse": 253824,
+            "fine": 2244,
+            "fallback": 1547
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1547,
+            "check-fine-change": 0,
+            "check-fine-tie": 0
+          }
+        },
+        "precision-d8": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              8149
+            ],
+            "check-integer-bits": [
+              8149,
+              2015
+            ],
+            "check-tiny": [
+              260129,
+              0
+            ],
+            "check-coarse": [
+              260129,
+              104126
+            ],
+            "check-boundary": [
+              156003,
+              1138
+            ],
+            "check-fine-change": [
+              154865,
+              11
+            ],
+            "check-fine-tie": [
+              154854,
+              1034
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 0,
+            "integer": 2015,
+            "coarse": 104126,
+            "fine": 153820,
+            "fallback": 2183
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1138,
+            "check-fine-change": 11,
+            "check-fine-tie": 1034
+          }
+        },
+        "precision-d9": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-nonfinite": [
+              262144,
+              0
+            ],
+            "check-power": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              8063
+            ],
+            "check-integer-bits": [
+              8063,
+              1998
+            ],
+            "check-tiny": [
+              260146,
+              0
+            ],
+            "check-coarse": [
+              260146,
+              100221
+            ],
+            "check-boundary": [
+              159925,
+              1142
+            ],
+            "check-fine-change": [
+              158783,
+              18
+            ],
+            "check-fine-tie": [
+              158765,
+              948
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "power": 0,
+            "integer": 1998,
+            "coarse": 100221,
+            "fine": 157817,
+            "fallback": 2108
+          },
+          "reasons": {
+            "check-tiny": 0,
+            "check-boundary": 1142,
+            "check-fine-change": 18,
+            "check-fine-tie": 948
+          }
+        }
+      }
+    },
+    "binary64": {
+      "policy": "Balanced",
+      "sourceSha256": {
+        "include/boundragon/detail/centered_filter.h": "e710923933ad00fd238a5a118ce3a972c0edd2778ec1ea6f18e05caeba1975d3",
+        "include/boundragon/detail/canonical_decimal.h": "bfed86fcd2ec15b324cf701af31e2f6b0cd548f097703e3d1bba3e9d4b165c1e",
+        "include/boundragon/detail/decimal_core.h": "a0cfa70f0348fe9ef442cbf521aa3136efeba117477ef69587a8ab9f5d8dd229",
+        "include/boundragon/detail/decimal_tables.h": "0c7260350f27c9f1a2d49a5e347dd6f850729512888c8dab2b325aab911f5028",
+        "benchmarks/branch_profile64.cpp": "e4d606669c07946ff3b4d9e8ca3e598858e32c5585ffade6a684e6522e95e1bc"
+      },
+      "samples": {
+        "random-finite-bits": {
+          "n": 2097152,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 1048576
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 1048576
+            }
+          ],
+          "guards": {
+            "check-special": [
+              2097152,
+              1002
+            ],
+            "check-integer-range": [
+              2096150,
+              54101
+            ],
+            "check-integer-bits": [
+              54101,
+              2039
+            ],
+            "check-power": [
+              2094111,
+              0
+            ],
+            "check-boundary": [
+              2094111,
+              5296
+            ],
+            "check-rounding": [
+              2094111,
+              14473
+            ],
+            "check-ambiguity": [
+              2094111,
+              19717
+            ],
+            "check-tail": [
+              2074394,
+              815389
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 2039,
+            "coarse": 815389,
+            "fine": 1259005,
+            "fallback": 20719
+          },
+          "reasons": {
+            "subnormal": 1002,
+            "check-boundary": 5296,
+            "check-rounding": 14421
+          }
+        },
+        "decimal-1-to-6": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              0
+            ],
+            "check-integer-range": [
+              262144,
+              102079
+            ],
+            "check-integer-bits": [
+              102079,
+              86488
+            ],
+            "check-power": [
+              175656,
+              135
+            ],
+            "check-boundary": [
+              175521,
+              2201
+            ],
+            "check-rounding": [
+              175521,
+              16
+            ],
+            "check-ambiguity": [
+              175521,
+              2201
+            ],
+            "check-tail": [
+              173320,
+              173320
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 135,
+            "integer": 86488,
+            "coarse": 173320,
+            "fine": 0,
+            "fallback": 2201
+          },
+          "reasons": {
+            "subnormal": 0,
+            "check-boundary": 2201,
+            "check-rounding": 0
+          }
+        },
+        "precision-d1": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              119
+            ],
+            "check-integer-range": [
+              262025,
+              6700
+            ],
+            "check-integer-bits": [
+              6700,
+              6700
+            ],
+            "check-power": [
+              255325,
+              30
+            ],
+            "check-boundary": [
+              255295,
+              1176
+            ],
+            "check-rounding": [
+              255295,
+              88
+            ],
+            "check-ambiguity": [
+              255295,
+              1176
+            ],
+            "check-tail": [
+              254119,
+              254119
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 30,
+            "integer": 6700,
+            "coarse": 254119,
+            "fine": 0,
+            "fallback": 1295
+          },
+          "reasons": {
+            "subnormal": 119,
+            "check-boundary": 1176,
+            "check-rounding": 0
+          }
+        },
+        "precision-d2": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              148
+            ],
+            "check-integer-range": [
+              261996,
+              6743
+            ],
+            "check-integer-bits": [
+              6743,
+              6384
+            ],
+            "check-power": [
+              255612,
+              21
+            ],
+            "check-boundary": [
+              255591,
+              1066
+            ],
+            "check-rounding": [
+              255591,
+              27
+            ],
+            "check-ambiguity": [
+              255591,
+              1066
+            ],
+            "check-tail": [
+              254525,
+              254525
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 21,
+            "integer": 6384,
+            "coarse": 254525,
+            "fine": 0,
+            "fallback": 1214
+          },
+          "reasons": {
+            "subnormal": 148,
+            "check-boundary": 1066,
+            "check-rounding": 0
+          }
+        },
+        "precision-d3": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              126
+            ],
+            "check-integer-range": [
+              262018,
+              6697
+            ],
+            "check-integer-bits": [
+              6697,
+              5936
+            ],
+            "check-power": [
+              256082,
+              1
+            ],
+            "check-boundary": [
+              256081,
+              1143
+            ],
+            "check-rounding": [
+              256081,
+              17
+            ],
+            "check-ambiguity": [
+              256081,
+              1143
+            ],
+            "check-tail": [
+              254938,
+              254938
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 1,
+            "integer": 5936,
+            "coarse": 254938,
+            "fine": 0,
+            "fallback": 1269
+          },
+          "reasons": {
+            "subnormal": 126,
+            "check-boundary": 1143,
+            "check-rounding": 0
+          }
+        },
+        "precision-d4": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              143
+            ],
+            "check-integer-range": [
+              262001,
+              6930
+            ],
+            "check-integer-bits": [
+              6930,
+              5626
+            ],
+            "check-power": [
+              256375,
+              0
+            ],
+            "check-boundary": [
+              256375,
+              1205
+            ],
+            "check-rounding": [
+              256375,
+              18
+            ],
+            "check-ambiguity": [
+              256375,
+              1205
+            ],
+            "check-tail": [
+              255170,
+              255170
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 5626,
+            "coarse": 255170,
+            "fine": 0,
+            "fallback": 1348
+          },
+          "reasons": {
+            "subnormal": 143,
+            "check-boundary": 1205,
+            "check-rounding": 0
+          }
+        },
+        "precision-d5": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              128
+            ],
+            "check-integer-range": [
+              262016,
+              6855
+            ],
+            "check-integer-bits": [
+              6855,
+              5247
+            ],
+            "check-power": [
+              256769,
+              0
+            ],
+            "check-boundary": [
+              256769,
+              1203
+            ],
+            "check-rounding": [
+              256769,
+              20
+            ],
+            "check-ambiguity": [
+              256769,
+              1203
+            ],
+            "check-tail": [
+              255566,
+              255566
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 5247,
+            "coarse": 255566,
+            "fine": 0,
+            "fallback": 1331
+          },
+          "reasons": {
+            "subnormal": 128,
+            "check-boundary": 1203,
+            "check-rounding": 0
+          }
+        },
+        "precision-d6": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              127
+            ],
+            "check-integer-range": [
+              262017,
+              6737
+            ],
+            "check-integer-bits": [
+              6737,
+              4625
+            ],
+            "check-power": [
+              257392,
+              0
+            ],
+            "check-boundary": [
+              257392,
+              1256
+            ],
+            "check-rounding": [
+              257392,
+              27
+            ],
+            "check-ambiguity": [
+              257392,
+              1256
+            ],
+            "check-tail": [
+              256136,
+              256136
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 4625,
+            "coarse": 256136,
+            "fine": 0,
+            "fallback": 1383
+          },
+          "reasons": {
+            "subnormal": 127,
+            "check-boundary": 1256,
+            "check-rounding": 0
+          }
+        },
+        "precision-d7": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              147
+            ],
+            "check-integer-range": [
+              261997,
+              6720
+            ],
+            "check-integer-bits": [
+              6720,
+              4244
+            ],
+            "check-power": [
+              257753,
+              0
+            ],
+            "check-boundary": [
+              257753,
+              1143
+            ],
+            "check-rounding": [
+              257753,
+              22
+            ],
+            "check-ambiguity": [
+              257753,
+              1143
+            ],
+            "check-tail": [
+              256610,
+              256610
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 4244,
+            "coarse": 256610,
+            "fine": 0,
+            "fallback": 1290
+          },
+          "reasons": {
+            "subnormal": 147,
+            "check-boundary": 1143,
+            "check-rounding": 0
+          }
+        },
+        "precision-d8": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              133
+            ],
+            "check-integer-range": [
+              262011,
+              6819
+            ],
+            "check-integer-bits": [
+              6819,
+              3845
+            ],
+            "check-power": [
+              258166,
+              0
+            ],
+            "check-boundary": [
+              258166,
+              1161
+            ],
+            "check-rounding": [
+              258166,
+              18
+            ],
+            "check-ambiguity": [
+              258166,
+              1161
+            ],
+            "check-tail": [
+              257005,
+              257005
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 3845,
+            "coarse": 257005,
+            "fine": 0,
+            "fallback": 1294
+          },
+          "reasons": {
+            "subnormal": 133,
+            "check-boundary": 1161,
+            "check-rounding": 0
+          }
+        },
+        "precision-d9": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              123
+            ],
+            "check-integer-range": [
+              262021,
+              6738
+            ],
+            "check-integer-bits": [
+              6738,
+              3429
+            ],
+            "check-power": [
+              258592,
+              0
+            ],
+            "check-boundary": [
+              258592,
+              1141
+            ],
+            "check-rounding": [
+              258592,
+              22
+            ],
+            "check-ambiguity": [
+              258592,
+              1141
+            ],
+            "check-tail": [
+              257451,
+              257451
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 3429,
+            "coarse": 257451,
+            "fine": 0,
+            "fallback": 1264
+          },
+          "reasons": {
+            "subnormal": 123,
+            "check-boundary": 1141,
+            "check-rounding": 0
+          }
+        },
+        "precision-d10": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              147
+            ],
+            "check-integer-range": [
+              261997,
+              6860
+            ],
+            "check-integer-bits": [
+              6860,
+              3039
+            ],
+            "check-power": [
+              258958,
+              0
+            ],
+            "check-boundary": [
+              258958,
+              1276
+            ],
+            "check-rounding": [
+              258958,
+              20
+            ],
+            "check-ambiguity": [
+              258958,
+              1276
+            ],
+            "check-tail": [
+              257682,
+              257682
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 3039,
+            "coarse": 257682,
+            "fine": 0,
+            "fallback": 1423
+          },
+          "reasons": {
+            "subnormal": 147,
+            "check-boundary": 1276,
+            "check-rounding": 0
+          }
+        },
+        "precision-d11": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              128
+            ],
+            "check-integer-range": [
+              262016,
+              6781
+            ],
+            "check-integer-bits": [
+              6781,
+              2548
+            ],
+            "check-power": [
+              259468,
+              0
+            ],
+            "check-boundary": [
+              259468,
+              1163
+            ],
+            "check-rounding": [
+              259468,
+              24
+            ],
+            "check-ambiguity": [
+              259468,
+              1163
+            ],
+            "check-tail": [
+              258305,
+              258305
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 2548,
+            "coarse": 258305,
+            "fine": 0,
+            "fallback": 1291
+          },
+          "reasons": {
+            "subnormal": 128,
+            "check-boundary": 1163,
+            "check-rounding": 0
+          }
+        },
+        "precision-d12": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              128
+            ],
+            "check-integer-range": [
+              262016,
+              6665
+            ],
+            "check-integer-bits": [
+              6665,
+              2119
+            ],
+            "check-power": [
+              259897,
+              0
+            ],
+            "check-boundary": [
+              259897,
+              1154
+            ],
+            "check-rounding": [
+              259897,
+              21
+            ],
+            "check-ambiguity": [
+              259897,
+              1154
+            ],
+            "check-tail": [
+              258743,
+              258743
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 2119,
+            "coarse": 258743,
+            "fine": 0,
+            "fallback": 1282
+          },
+          "reasons": {
+            "subnormal": 128,
+            "check-boundary": 1154,
+            "check-rounding": 0
+          }
+        },
+        "precision-d13": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              118
+            ],
+            "check-integer-range": [
+              262026,
+              6887
+            ],
+            "check-integer-bits": [
+              6887,
+              1699
+            ],
+            "check-power": [
+              260327,
+              0
+            ],
+            "check-boundary": [
+              260327,
+              1166
+            ],
+            "check-rounding": [
+              260327,
+              16
+            ],
+            "check-ambiguity": [
+              260327,
+              1166
+            ],
+            "check-tail": [
+              259161,
+              259161
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 1699,
+            "coarse": 259161,
+            "fine": 0,
+            "fallback": 1284
+          },
+          "reasons": {
+            "subnormal": 118,
+            "check-boundary": 1166,
+            "check-rounding": 0
+          }
+        },
+        "precision-d14": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              106
+            ],
+            "check-integer-range": [
+              262038,
+              6853
+            ],
+            "check-integer-bits": [
+              6853,
+              1318
+            ],
+            "check-power": [
+              260720,
+              0
+            ],
+            "check-boundary": [
+              260720,
+              1115
+            ],
+            "check-rounding": [
+              260720,
+              19
+            ],
+            "check-ambiguity": [
+              260720,
+              1115
+            ],
+            "check-tail": [
+              259605,
+              259605
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 1318,
+            "coarse": 259605,
+            "fine": 0,
+            "fallback": 1221
+          },
+          "reasons": {
+            "subnormal": 106,
+            "check-boundary": 1115,
+            "check-rounding": 0
+          }
+        },
+        "precision-d15": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              113
+            ],
+            "check-integer-range": [
+              262031,
+              6884
+            ],
+            "check-integer-bits": [
+              6884,
+              983
+            ],
+            "check-power": [
+              261048,
+              0
+            ],
+            "check-boundary": [
+              261048,
+              1196
+            ],
+            "check-rounding": [
+              261048,
+              23
+            ],
+            "check-ambiguity": [
+              261048,
+              1196
+            ],
+            "check-tail": [
+              259852,
+              259852
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 983,
+            "coarse": 259852,
+            "fine": 0,
+            "fallback": 1309
+          },
+          "reasons": {
+            "subnormal": 113,
+            "check-boundary": 1196,
+            "check-rounding": 0
+          }
+        },
+        "precision-d16": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              125
+            ],
+            "check-integer-range": [
+              262019,
+              6737
+            ],
+            "check-integer-bits": [
+              6737,
+              472
+            ],
+            "check-power": [
+              261547,
+              0
+            ],
+            "check-boundary": [
+              261547,
+              931
+            ],
+            "check-rounding": [
+              261547,
+              469
+            ],
+            "check-ambiguity": [
+              261547,
+              1390
+            ],
+            "check-tail": [
+              260157,
+              220158
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 472,
+            "coarse": 220158,
+            "fine": 39999,
+            "fallback": 1515
+          },
+          "reasons": {
+            "subnormal": 125,
+            "check-boundary": 931,
+            "check-rounding": 459
+          }
+        },
+        "precision-d17": {
+          "n": 262144,
+          "seeds": [
+            {
+              "seed": "0x3156a5",
+              "n": 131072
+            },
+            {
+              "seed": "0x9a71de",
+              "n": 131072
+            }
+          ],
+          "guards": {
+            "check-special": [
+              262144,
+              143
+            ],
+            "check-integer-range": [
+              262001,
+              6881
+            ],
+            "check-integer-bits": [
+              6881,
+              269
+            ],
+            "check-power": [
+              261732,
+              0
+            ],
+            "check-boundary": [
+              261732,
+              650
+            ],
+            "check-rounding": [
+              261732,
+              1834
+            ],
+            "check-ambiguity": [
+              261732,
+              2478
+            ],
+            "check-tail": [
+              259254,
+              102007
+            ]
+          },
+          "branches": {
+            "nonfinite": 0,
+            "zero": 0,
+            "power": 0,
+            "integer": 269,
+            "coarse": 102007,
+            "fine": 157247,
+            "fallback": 2621
+          },
+          "reasons": {
+            "subnormal": 143,
+            "check-boundary": 650,
+            "check-rounding": 1828
+          }
+        }
+      }
+    }
+  }
+}

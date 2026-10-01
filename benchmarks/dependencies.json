@@ -1,0 +1,52 @@
+{
+  "dragonbox": {
+    "repository": "https://github.com/fmtlib/dtoa-benchmark",
+    "commit": "5c3e325f9b100d4207fbee105fbd704588dcd87e"
+  },
+  "zmij": {
+    "repository": "https://github.com/vitaut/zmij",
+    "commit": "6dc07c1d3a3d4f2289b67001b86fcf084be48555"
+  },
+  "files": {
+    "dragonbox/dragonbox.h": {
+      "sha256": "b29de6e723a33bbcaba478a9f7e7f932c15b2b97c45e8389cefa85a570e3116b",
+      "url": "https://raw.githubusercontent.com/fmtlib/dtoa-benchmark/5c3e325f9b100d4207fbee105fbd704588dcd87e/src/dragonbox/dragonbox.h"
+    },
+    "dragonbox/LICENSE-Boost": {
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+      "url": "https://raw.githubusercontent.com/ulfjack/ryu/master/LICENSE-Boost"
+    },
+    "zmij/zmij.h": {
+      "sha256": "0bdb24b689d0b2bd0c70cdb7ee6c2bb0c6f94559a46a5498c235d00bf45059d8",
+      "url": "https://raw.githubusercontent.com/vitaut/zmij/6dc07c1d3a3d4f2289b67001b86fcf084be48555/zmij.h"
+    },
+    "zmij/zmij.cc": {
+      "sha256": "8d09ab8e1bd96a16d1a37a309ca55206eb3f559dfa0062cae8be1234546fdd55",
+      "url": "https://raw.githubusercontent.com/vitaut/zmij/6dc07c1d3a3d4f2289b67001b86fcf084be48555/zmij.cc"
+    },
+    "zmij/LICENSE": {
+      "sha256": "a69b36adb8d116376bcd580772fa45f08fffecc17833cb9822532f4e4f5ec372",
+      "url": "https://raw.githubusercontent.com/vitaut/zmij/6dc07c1d3a3d4f2289b67001b86fcf084be48555/LICENSE"
+    },
+    "xjb/ftoa.cpp": {
+      "sha256": "6030d82adcb32c260b6fea4349ab078b0198a5aa8c1a99ca4726ffaa5133ea70",
+      "url": "https://raw.githubusercontent.com/xjb714/xjb/80cc89574a8f8457ffbf951afa2fd27c2459bd4a/bench/xjb/float_to_string/ftoa.cpp"
+    },
+    "xjb/ftoa.h": {
+      "sha256": "fe04a0b082908261faf50d2ac3a39452e8c262c715821e09e1011f0bd011e073",
+      "url": "https://raw.githubusercontent.com/xjb714/xjb/80cc89574a8f8457ffbf951afa2fd27c2459bd4a/bench/xjb/float_to_string/ftoa.h"
+    },
+    "xjb/ftoa_comp.cpp": {
+      "sha256": "31366b1cdbe6a66ac3f21e32a352b30881e25007e5c2b8db9a224d4d3d0cdf36",
+      "url": "https://raw.githubusercontent.com/xjb714/xjb/80cc89574a8f8457ffbf951afa2fd27c2459bd4a/bench/xjb/float_to_string/ftoa_comp.cpp"
+    },
+    "xjb/LICENSE": {
+      "sha256": "5655de88c9d5a29e358f67884af12a1ffbd46449e53a331c449c55beaee29784",
+      "url": "https://raw.githubusercontent.com/xjb714/xjb/80cc89574a8f8457ffbf951afa2fd27c2459bd4a/LICENSE"
+    }
+  },
+  "xjb": {
+    "repository": "https://github.com/xjb714/xjb",
+    "commit": "80cc89574a8f8457ffbf951afa2fd27c2459bd4a"
+  }
+}

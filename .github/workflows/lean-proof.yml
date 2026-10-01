@@ -1,0 +1,38 @@
+name: Check Lean filter proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - proof/lean/**
+      - include/boundragon/detail/centered_filter.h
+      - include/boundragon/detail/compact_cache.h
+      - .github/workflows/lean-proof.yml
+  pull_request:
+    paths:
+      - proof/lean/**
+      - include/boundragon/detail/centered_filter.h
+      - include/boundragon/detail/compact_cache.h
+      - .github/workflows/lean-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    env:
+      LEAN_NUM_THREADS: 2
+    steps:
+      - uses: actions/checkout@v6
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: proof/lean
+          auto-config: 'false'
+          build: 'true'
+          test: 'false'
+          lint: 'false'
+          use-mathlib-cache: 'true'
+          leanchecker: 'true'
+          leanchecker-args: Boundragon

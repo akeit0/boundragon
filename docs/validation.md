@@ -44,6 +44,23 @@ source correspondence, C++ arithmetic semantics and correct compiler
 translation. Sampled compiled tests exercise that implementation bridge.
 See [the proof and its limits](proof.md#8-reproduction-and-remaining-limits).
 
+## Optional Lean filter proof
+
+The [Lean project](../proof/lean/README.md) has a pinned toolchain and mathlib
+dependency. With `elan` installed, run:
+
+```sh
+cd proof/lean
+lake build
+lake env leanchecker Boundragon
+```
+
+The first build may fetch dependencies; the project README describes how to
+download their precompiled cache. The build checks the centered binary64 guard
+proofs and audits transitive axioms. The checker rechecks the compiled proof
+environment. This is separate from CTest and does not establish the complete
+converter's shortestness, fallback correctness, or C++ source correspondence.
+
 ## Read-only table checks
 
 ```sh

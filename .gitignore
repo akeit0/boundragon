@@ -1,4 +1,5 @@
 /build/
+/proof/lean/.lake/
 /node_modules/
 /dist/
 /benchmarks/deps/

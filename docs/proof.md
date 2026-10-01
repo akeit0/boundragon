@@ -19,6 +19,12 @@ The default binary32 Q40 filter's center/radius guards, power lookup and
 compiled-cache certificate are described in
 [binary32 Fast design](binary32_fast.md).
 
+The [Lean project](../proof/lean/README.md) formally proves the centered
+binary64 filter's acceptance/rejection and fine-rounding safety under explicit
+cache and interval contracts. Its combined branch theorem is kernel-checked;
+the complete fallback, shortestness, actual cache contracts, and C++ source
+correspondence remain outside this partial formalization.
+
 The current sources are `decimal_core.h`, `decimal_tables.h`,
 `centered_filter.h`, `canonical_decimal.h`, `compact_cache.h` and `compact_cache_tables.h`.
 [proof/cache_bounds.md](../proof/cache_bounds.md) supplies the cache contracts;

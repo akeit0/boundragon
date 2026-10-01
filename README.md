@@ -155,6 +155,11 @@ and table-generation checks. The C++ checks run without Python.
 [Validation instructions](docs/validation.md) describe the evidence and optional
 exhaustive binary32 checks.
 
+A [Lean proof project](proof/lean/README.md) formally verifies the centered
+binary64 filter's decision safety under explicit cache/interval contracts.
+This is a partial formalization; full-converter shortestness, fallback
+correctness, and C++ source correspondence remain separate obligations.
+
 ## Interactive documentation
 
 The English/Japanese explorer follows each format's native conversion path,
